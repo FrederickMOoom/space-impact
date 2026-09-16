@@ -51,20 +51,21 @@
             width: 100%;
             height: 100%;
             min-height: 100dvh;
-            padding: 8px;
+            padding: 6px;
             box-sizing: border-box;
+            position: relative;
         }
 
         /* --- SCREEN CONTAINER --- */
         #game-frame {
             position: relative;
-            width: 95vw;
-            max-width: 800px;
+            width: min(96vw, calc((100dvh - 58px) * (4 / 3)), 800px);
+            max-height: calc(100dvh - 44px);
             aspect-ratio: 4/3;
             background: #000;
-            border: 8px solid #ff77a9;
-            border-radius: 28px;
-            box-shadow: 0 12px 35px rgba(255, 64, 129, 0.35), 0 0 0 6px #7c4dff, inset 0 0 20px rgba(0, 0, 0, 0.8);
+            border: 6px solid #ff77a9;
+            border-radius: 26px;
+            box-shadow: 0 12px 35px rgba(255, 64, 129, 0.35), 0 0 0 5px #7c4dff, inset 0 0 20px rgba(0, 0, 0, 0.8);
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -817,59 +818,238 @@
             100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
         }
 
-        /* --- MEDIA QUERIES FOR ANDROID MOBILE (PORTRAIT & LANDSCAPE) --- */
-        @media (max-width: 850px) {
-            #mobile-controls {
-                display: flex;
-            }
+        /* --- RARITY SYSTEM STYLES --- */
+        .rarity-badge {
+            font-family: 'Lilita One', cursive;
+            font-size: 11px;
+            letter-spacing: 0.5px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+        .rarity-common {
+            background: rgba(200, 214, 229, 0.18);
+            border: 1.5px solid #c8d6e5;
+            color: #d1d8e0;
+        }
+        .rarity-rare {
+            background: rgba(0, 229, 255, 0.2);
+            border: 1.5px solid #00e5ff;
+            color: #00e5ff;
+            box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+        }
+        .rarity-epic {
+            background: rgba(186, 104, 200, 0.25);
+            border: 1.5px solid #ba68c8;
+            color: #e1bee7;
+            box-shadow: 0 0 10px rgba(186, 104, 200, 0.4);
+        }
+        .rarity-legendary {
+            background: linear-gradient(90deg, rgba(255, 210, 0, 0.3), rgba(255, 64, 129, 0.3), rgba(0, 229, 255, 0.3));
+            border: 1.5px solid #ffd200;
+            color: #ffd200;
+            box-shadow: 0 0 14px rgba(255, 210, 0, 0.5);
+            animation: rainbowGlow 3s linear infinite;
         }
 
-        /* Android Small Screen (Portrait < 500px) */
-        @media (max-width: 500px) {
+        @keyframes rainbowGlow {
+            0% { filter: hue-rotate(0deg); }
+            100% { filter: hue-rotate(360deg); }
+        }
+
+        .ship-card.rarity-card-legendary {
+            border-color: #ffd200;
+            box-shadow: 0 0 16px rgba(255, 210, 0, 0.3);
+        }
+        .ship-card.rarity-card-epic {
+            border-color: #ba68c8;
+        }
+        .ship-card.rarity-card-rare {
+            border-color: #00e5ff;
+        }
+        .ship-shot-info {
+            font-size: 10px;
+            color: #ffd200;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        /* --- LEADERBOARD MODAL --- */
+        #leaderboard-modal {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 92%;
+            max-width: 480px;
+            max-height: 88dvh;
+            background: linear-gradient(135deg, #26114a 0%, #130728 100%);
+            border: 6px solid #ffd200;
+            border-radius: 28px;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 0 6px #7c4dff;
+            z-index: 35;
+            display: none;
+            flex-direction: column;
+            padding: 16px 20px;
+            box-sizing: border-box;
+            color: #fff;
+            animation: popIn 0.25s ease-out;
+        }
+
+        .leaderboard-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 3px dashed rgba(255, 255, 255, 0.2);
+            padding-bottom: 10px;
+            margin-bottom: 8px;
+        }
+
+        .leaderboard-title {
+            font-family: 'Lilita One', cursive;
+            font-size: 22px;
+            color: #ffd200;
+            text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .leaderboard-table-wrap {
+            overflow-y: auto;
+            max-height: 320px;
+            margin: 6px 0 12px 0;
+            border-radius: 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .leaderboard-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+            text-align: left;
+        }
+
+        .leaderboard-table th {
+            background: #391a6d;
+            color: #ffd200;
+            padding: 8px 10px;
+            font-family: 'Lilita One', cursive;
+            font-size: 14px;
+            position: sticky;
+            top: 0;
+            z-index: 2;
+        }
+
+        .leaderboard-table td {
+            padding: 7px 10px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .leaderboard-table tr:nth-child(even) {
+            background: rgba(255, 255, 255, 0.04);
+        }
+
+        .leaderboard-rank-1 { color: #ffd200; font-weight: bold; font-size: 15px; }
+        .leaderboard-rank-2 { color: #e0e0e0; font-weight: bold; font-size: 14px; }
+        .leaderboard-rank-3 { color: #ffb74d; font-weight: bold; font-size: 14px; }
+
+        /* PC Keyboard Guide Bar */
+        #pc-controls-bar {
+            margin-top: 6px;
+            font-size: 12px;
+            color: #d1c4e9;
+            background: rgba(22, 10, 50, 0.85);
+            border: 2px solid rgba(124, 77, 255, 0.4);
+            border-radius: 20px;
+            padding: 5px 16px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+            box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4);
+        }
+
+        #pc-controls-bar kbd {
+            background: #3c1a80;
+            color: #ffd200;
+            padding: 2px 6px;
+            border-radius: 6px;
+            font-family: 'Lilita One', cursive;
+            font-size: 11px;
+            border: 1px solid #7c4dff;
+            box-shadow: 0 2px 0 #1f0b47;
+        }
+
+        /* --- RESPONSIVE MEDIA QUERIES (ANDROID PORTRAIT, LANDSCAPE & PC) --- */
+        /* Android & Small Screen (Portrait Handheld Console View) */
+        @media (max-width: 850px) and (orientation: portrait), (max-width: 600px) {
             #app-container {
                 padding: 4px;
-                justify-content: flex-start;
+                padding-top: max(4px, env(safe-area-inset-top));
+                padding-bottom: max(6px, env(safe-area-inset-bottom));
+                justify-content: space-between;
             }
             #game-frame {
                 width: 100%;
-                border-width: 5px;
-                border-radius: 20px;
-                box-shadow: 0 6px 20px rgba(255, 64, 129, 0.3), 0 0 0 4px #7c4dff;
+                max-height: 48dvh;
+                border-width: 4px;
+                border-radius: 18px;
+                box-shadow: 0 6px 20px rgba(255, 64, 129, 0.3), 0 0 0 3px #7c4dff;
             }
-            .hud-badge {
-                font-size: 14px;
-                padding: 3px 8px;
-                border-width: 2px;
-            }
-            .hud-btn {
-                width: 34px;
-                height: 34px;
-                font-size: 15px;
-                border-width: 2px;
+            #pc-controls-bar {
+                display: none !important;
             }
             #mobile-controls {
+                display: flex;
                 width: 100%;
-                padding: 10px 14px;
-                border-radius: 20px;
-                margin-top: 8px;
+                padding: 8px 12px;
+                border-radius: 18px;
+                margin-top: 4px;
+                flex-shrink: 0;
+            }
+            .hud-top {
+                gap: 3px;
+            }
+            .hud-badge {
+                font-size: clamp(10px, 2.8vw, 13px);
+                padding: 2px 6px;
+                border-width: 2px;
+                gap: 3px;
+            }
+            .hud-badge.lives-badge {
+                font-size: clamp(11px, 3.2vw, 15px);
+                letter-spacing: 0;
+            }
+            .hud-btn {
+                width: 32px;
+                height: 32px;
+                font-size: 14px;
+                border-width: 2px;
             }
             .dpad-wrapper, .d-pad {
-                width: 125px;
-                height: 125px;
+                width: 120px;
+                height: 120px;
             }
             .d-pad {
-                grid-template-columns: repeat(3, 38px);
-                grid-template-rows: repeat(3, 38px);
+                grid-template-columns: repeat(3, 36px);
+                grid-template-rows: repeat(3, 36px);
             }
             .action-btn {
-                width: 76px;
-                height: 76px;
-                font-size: 20px;
+                width: 72px;
+                height: 72px;
+                font-size: 19px;
             }
         }
 
         /* Android Landscape Mode (Horizontal Fullscreen Handheld) */
-        @media (max-width: 950px) and (orientation: landscape) {
+        @media (orientation: landscape) and (max-height: 600px), (max-width: 950px) and (orientation: landscape) {
             #app-container {
                 padding: 0;
                 flex-direction: row;
@@ -878,42 +1058,64 @@
             }
             #game-frame {
                 height: 100dvh;
-                width: auto;
+                width: min(100vw, calc(100dvh * (4 / 3)));
                 max-width: none;
+                max-height: 100dvh;
                 aspect-ratio: 4/3;
                 border: none;
                 border-radius: 0;
                 box-shadow: none;
             }
+            #pc-controls-bar {
+                display: none !important;
+            }
             #mobile-controls {
-                display: flex;
+                display: flex !important;
                 position: absolute;
-                bottom: 10px;
+                bottom: 0;
                 left: 0;
                 width: 100%;
                 max-width: none;
                 background: transparent;
                 border: none;
                 box-shadow: none;
-                padding: 0 25px;
+                padding: 0 max(16px, env(safe-area-inset-right)) max(8px, env(safe-area-inset-bottom)) max(16px, env(safe-area-inset-left));
                 pointer-events: none;
                 z-index: 18;
+                justify-content: space-between;
+                align-items: flex-end;
             }
             .dpad-wrapper {
                 pointer-events: auto;
-                background: rgba(25, 10, 54, 0.45);
+                background: rgba(25, 10, 54, 0.55);
                 border-radius: 50%;
-                backdrop-filter: blur(4px);
+                backdrop-filter: blur(6px);
+                transform: scale(0.92);
+                transform-origin: bottom left;
             }
             .console-center {
                 display: none;
             }
             .action-btns {
                 pointer-events: auto;
+                transform: scale(0.92);
+                transform-origin: bottom right;
             }
             .action-btn {
-                background: linear-gradient(180deg, rgba(255, 64, 129, 0.75) 0%, rgba(216, 27, 96, 0.75) 100%);
-                backdrop-filter: blur(4px);
+                background: linear-gradient(180deg, rgba(255, 64, 129, 0.85) 0%, rgba(216, 27, 96, 0.85) 100%);
+                backdrop-filter: blur(6px);
+            }
+            #message-overlay, #pause-modal, #shop-modal, #leaderboard-modal {
+                max-height: 94dvh;
+                padding: 12px 18px;
+                gap: 6px;
+            }
+            #message-overlay h1, #pause-modal h1 {
+                font-size: 24px;
+            }
+            .btn-primary {
+                font-size: 18px;
+                padding: 8px 18px;
             }
         }
     </style>
@@ -934,9 +1136,11 @@
                     <div class="hud-badge level-badge" id="level-display">🚀 LVL 1</div>
                     <div class="hud-badge lives-badge" id="lives-display">💖💖💖</div>
                     <div class="hud-btn-group">
-                        <button class="hud-btn" id="sound-btn" title="Suara On/Off">🔊</button>
-                        <button class="hud-btn menu-btn" id="in-game-menu-btn" title="Menu / Jeda">⏸️</button>
-                        <button class="hud-btn fullscreen-btn" id="fullscreen-btn" title="Layar Penuh (Fullscreen)">⛶</button>
+                        <button class="hud-btn" id="sound-btn" title="Suara On/Off (M)">🔊</button>
+                        <button class="hud-btn" id="toggle-ctrl-btn" title="Kontrol On-Screen (Virtual Gamepad)">🎮</button>
+                        <button class="hud-btn" id="leaderboard-hud-btn" title="Papan Peringkat (Leaderboard)">🏆</button>
+                        <button class="hud-btn menu-btn" id="in-game-menu-btn" title="Menu / Jeda (Esc/P)">⏸️</button>
+                        <button class="hud-btn fullscreen-btn" id="fullscreen-btn" title="Layar Penuh (F)">⛶</button>
                     </div>
                 </div>
 
@@ -969,7 +1173,10 @@
                     </div>
                 </div>
 
-                <button id="shop-btn-menu" class="btn-shop">🛒 TOKO PESAWAT (<span id="menu-coin-count">🪙 0</span>)</button>
+                <div style="display: flex; gap: 8px; width: 100%; justify-content: center;">
+                    <button id="shop-btn-menu" class="btn-shop" style="width: 50%; font-size: 16px;">🛒 TOKO (<span id="menu-coin-count">🪙 0</span>)</button>
+                    <button id="leaderboard-btn-menu" class="btn-chip" style="width: 50%; font-size: 15px; font-weight: bold; background: linear-gradient(135deg, #7c4dff, #b388ff); color: #fff; border: 2px solid #ffd200;">🏆 JUARA</button>
+                </div>
 
                 <button id="start-btn" class="btn-primary">MAIN SEKARANG! 🚀</button>
             </div>
@@ -986,7 +1193,10 @@
                 </div>
 
                 <button id="resume-btn" class="btn-primary" style="width: 100%; font-size: 22px;">LANJUT TERBANG 🚀</button>
-                <button id="pause-shop-btn" class="btn-shop" style="width: 100%; font-size: 18px;">🛒 TOKO PESAWAT</button>
+                <div style="display: flex; gap: 8px; width: 100%;">
+                    <button id="pause-shop-btn" class="btn-shop" style="width: 50%; font-size: 16px;">🛒 TOKO</button>
+                    <button id="pause-leaderboard-btn" class="btn-chip" style="width: 50%; font-size: 15px; font-weight: bold; background: #ede6fc; border-color: #ffd200; color: #512da8;">🏆 JUARA</button>
+                </div>
                 <button id="restart-game-btn" class="btn-chip" style="width: 100%; padding: 10px; font-size: 15px; background: #ede6fc; border-color: #b388ff; color: #512da8;">🔄 ULANG DARI AWAL</button>
                 <button id="quit-to-menu-btn" class="btn-chip" style="width: 100%; padding: 10px; font-size: 15px; background: #ffebee; border-color: #ff80ab; color: #c2185b;">🏠 KEMBALI KE MENU UTAMA</button>
             </div>
@@ -1006,6 +1216,47 @@
                     <button id="close-shop-btn" class="btn-close-shop">KEMBALI ✖</button>
                 </div>
             </div>
+
+            <!-- LEADERBOARD MODAL -->
+            <div id="leaderboard-modal">
+                <div class="leaderboard-header">
+                    <div class="leaderboard-title">🏆 PAPAN JUARA KOSMIK <span class="coin-icon-bounce">⭐</span></div>
+                    <button id="close-leaderboard-btn-x" style="background: none; border: none; font-size: 20px; color: #fff; cursor: pointer;">✖</button>
+                </div>
+                <div style="font-size: 12px; color: #b388ff; margin-bottom: 6px;">Catatan Pilot Tertinggi Penakluk Antariksa</div>
+                
+                <div class="leaderboard-table-wrap">
+                    <table class="leaderboard-table">
+                        <thead>
+                            <tr>
+                                <th>NO</th>
+                                <th>PILOT</th>
+                                <th>PESAWAT</th>
+                                <th>SKOR</th>
+                                <th>LVL</th>
+                            </tr>
+                        </thead>
+                        <tbody id="leaderboard-tbody">
+                            <!-- Populated dynamically -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <button id="reset-leaderboard-btn" class="btn-chip" style="font-size: 11px; padding: 5px 10px; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: #ccc;">HAPUS REKOR 🔄</button>
+                    <button id="close-leaderboard-btn" class="btn-close-shop" style="padding: 7px 22px; font-size: 15px;">KEMBALI ✖</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PC CONTROLS GUIDE BAR -->
+        <div id="pc-controls-bar">
+            <span>⌨️ <b>PANDUAN PC:</b></span>
+            <kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd> / <kbd>Panah</kbd> Gerak •
+            <kbd>Spasi</kbd> Tembak •
+            <kbd>P</kbd>/<kbd>Esc</kbd> Jeda •
+            <kbd>F</kbd> Fullscreen •
+            <kbd>M</kbd> Mute
         </div>
 
         <!-- ANDROID HANDHELD CONTROLS -->
@@ -1028,9 +1279,10 @@
                     <div class="speaker-dot"></div><div class="speaker-dot"></div><div class="speaker-dot"></div>
                     <div class="speaker-dot"></div><div class="speaker-dot"></div><div class="speaker-dot"></div>
                 </div>
-                <div style="display: flex; gap: 6px; margin-top: 4px;">
+                <div style="display: flex; gap: 5px; margin-top: 4px;">
                     <button id="mobile-pause-btn" class="console-quick-btn">⏸️ JEDA</button>
                     <button id="mobile-shop-btn" class="console-quick-btn">🛒 TOKO</button>
+                    <button id="mobile-lb-btn" class="console-quick-btn">🏆 JUARA</button>
                 </div>
             </div>
 
@@ -1082,40 +1334,89 @@
             playShoot(shipType = 'cat') {
                 if (!this.enabled || !this.ctx) return;
                 try {
+                    const now = this.ctx.currentTime;
                     const osc = this.ctx.createOscillator();
                     const gain = this.ctx.createGain();
-                    const now = this.ctx.currentTime;
-                    
-                    if (shipType === 'bunny') {
-                        osc.type = 'sine';
-                        osc.frequency.setValueAtTime(750, now);
-                        osc.frequency.exponentialRampToValueAtTime(350, now + 0.1);
-                    } else if (shipType === 'puppy') {
-                        osc.type = 'square';
-                        osc.frequency.setValueAtTime(450, now);
-                        osc.frequency.exponentialRampToValueAtTime(200, now + 0.11);
-                    } else if (shipType === 'dino') {
-                        osc.type = 'sawtooth';
-                        osc.frequency.setValueAtTime(320, now);
-                        osc.frequency.exponentialRampToValueAtTime(140, now + 0.12);
-                    } else if (shipType === 'cosmic') {
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(900, now);
-                        osc.frequency.exponentialRampToValueAtTime(450, now + 0.13);
-                    } else {
-                        osc.type = 'triangle';
-                        osc.frequency.setValueAtTime(600, now);
-                        osc.frequency.exponentialRampToValueAtTime(180, now + 0.12);
+
+                    switch(shipType) {
+                        case 'chirp':
+                            // High-pitch dual sonic chirp
+                            osc.type = 'sine';
+                            osc.frequency.setValueAtTime(1100, now);
+                            osc.frequency.exponentialRampToValueAtTime(550, now + 0.08);
+                            gain.gain.setValueAtTime(0.2, now);
+                            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.09);
+                            break;
+                        case 'bunny':
+                            // Sweet candy bounce pop
+                            osc.type = 'sine';
+                            osc.frequency.setValueAtTime(800, now);
+                            osc.frequency.exponentialRampToValueAtTime(380, now + 0.1);
+                            gain.gain.setValueAtTime(0.22, now);
+                            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.11);
+                            break;
+                        case 'frog':
+                            // Bouncy liquid bubble plop
+                            osc.type = 'triangle';
+                            osc.frequency.setValueAtTime(350, now);
+                            osc.frequency.linearRampToValueAtTime(680, now + 0.05);
+                            osc.frequency.exponentialRampToValueAtTime(250, now + 0.11);
+                            gain.gain.setValueAtTime(0.24, now);
+                            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                            break;
+                        case 'puppy':
+                            // Robust twin blaster punch
+                            osc.type = 'square';
+                            osc.frequency.setValueAtTime(460, now);
+                            osc.frequency.exponentialRampToValueAtTime(180, now + 0.11);
+                            gain.gain.setValueAtTime(0.18, now);
+                            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                            break;
+                        case 'dino':
+                            // Low roaring dragon fire saw
+                            osc.type = 'sawtooth';
+                            osc.frequency.setValueAtTime(280, now);
+                            osc.frequency.exponentialRampToValueAtTime(110, now + 0.13);
+                            gain.gain.setValueAtTime(0.22, now);
+                            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+                            break;
+                        case 'fox':
+                            // Electric sonic lightning zap
+                            osc.type = 'sawtooth';
+                            osc.frequency.setValueAtTime(950, now);
+                            osc.frequency.exponentialRampToValueAtTime(220, now + 0.09);
+                            gain.gain.setValueAtTime(0.19, now);
+                            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                            break;
+                        case 'cosmic':
+                            // Prismatic crystalline harmonic chime
+                            osc.type = 'triangle';
+                            osc.frequency.setValueAtTime(1150, now);
+                            osc.frequency.exponentialRampToValueAtTime(480, now + 0.13);
+                            gain.gain.setValueAtTime(0.2, now);
+                            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.14);
+                            break;
+                        case 'phoenix':
+                            // Blazing firebird solar screech
+                            osc.type = 'sawtooth';
+                            osc.frequency.setValueAtTime(1200, now);
+                            osc.frequency.exponentialRampToValueAtTime(320, now + 0.15);
+                            gain.gain.setValueAtTime(0.23, now);
+                            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15);
+                            break;
+                        default: // cat
+                            osc.type = 'triangle';
+                            osc.frequency.setValueAtTime(620, now);
+                            osc.frequency.exponentialRampToValueAtTime(180, now + 0.11);
+                            gain.gain.setValueAtTime(0.19, now);
+                            gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
+                            break;
                     }
 
-                    gain.gain.setValueAtTime(0.18, now);
-                    gain.gain.exponentialRampToValueAtTime(0.01, now + 0.12);
-                    
                     osc.connect(gain);
                     gain.connect(this.ctx.destination);
-                    
                     osc.start(now);
-                    osc.stop(now + 0.13);
+                    osc.stop(now + 0.16);
                 } catch(e) {}
             }
 
@@ -1220,48 +1521,178 @@
                 id: 'cat',
                 name: 'Astro-Cat',
                 pilot: '🐱 Kucing Astronot',
+                rarity: 'common',
                 price: 0,
-                desc: 'Roket lincah serba bisa dengan pilot kucing lucu.',
+                desc: 'Roket lincah serba bisa dengan bintang emas berputar.',
                 color: '#80deea',
-                shotName: 'Star Laser Kuning'
+                shotName: 'Golden Star Dart'
+            },
+            chirp: {
+                id: 'chirp',
+                name: 'Robo-Chirp',
+                pilot: '🐦 Burung Robot Cilik',
+                rarity: 'common',
+                price: 40,
+                desc: 'Pesawat burung mecha dengan gelombang cincin sonik biru getar.',
+                color: '#4fc3f7',
+                shotName: 'Cyan Sonic Ring'
             },
             bunny: {
                 id: 'bunny',
                 name: 'Candy-Bunny',
                 pilot: '🐰 Kelinci Manis',
-                price: 50,
-                desc: 'Pesawat stroberi membal dengan pilot kelinci bertelinga panjang!',
+                rarity: 'rare',
+                price: 90,
+                desc: 'Pesawat stroberi membal dengan stroberi hati gula manis!',
                 color: '#ff80ab',
-                shotName: 'Stroberi Star Bolt'
+                shotName: 'Sweet Heart Berry'
+            },
+            frog: {
+                id: 'frog',
+                name: 'Mecha-Frog',
+                pilot: '🐸 Katak Cyber Lincah',
+                rarity: 'rare',
+                price: 160,
+                desc: 'Kapal amfibi lincah dengan semburan gelembung ion hijau membal.',
+                color: '#69f0ae',
+                shotName: 'Bouncing Plasma Bubble'
             },
             puppy: {
                 id: 'puppy',
                 name: 'Puppy-Hero',
                 pilot: '🐶 Anak Anjing Aviator',
-                price: 100,
-                desc: 'Piring terbang emas kokoh dengan kacamata penerbang gagah!',
+                rarity: 'epic',
+                price: 250,
+                desc: 'Piring terbang emas kokoh dengan blaster tulang surya berputar!',
                 color: '#ffd200',
-                shotName: 'Twin Golden Blaster'
+                shotName: 'Golden Solar Bone'
             },
             dino: {
                 id: 'dino',
                 name: 'Dino-Jet',
                 pilot: '🦖 Dino Hijau Cilik',
-                price: 200,
-                desc: 'Jet bersayap naga dengan semburan plasma hijau membara!',
+                rarity: 'epic',
+                price: 380,
+                desc: 'Jet bersayap naga dengan semburan lidah api zamrud membara!',
                 color: '#00e676',
-                shotName: 'Plasma Green Fire'
+                shotName: 'Emerald Dragon Flame'
+            },
+            fox: {
+                id: 'fox',
+                name: 'Cyber-Fox',
+                pilot: '🦊 Rubah Neon Sonic',
+                rarity: 'epic',
+                price: 520,
+                desc: 'Interceptor bersudut tajam dengan duri petir laser violet berkekuatan tinggi!',
+                color: '#ea80fc',
+                shotName: 'Lightning Violet Javelin'
             },
             cosmic: {
                 id: 'cosmic',
                 name: 'Cosmic-UFO',
                 pilot: '🛸 Alien Ramah Mata 1',
-                price: 350,
-                desc: 'Piring terbang kosmik misterius berpelangi dengan kristal bintang!',
+                rarity: 'legendary',
+                price: 750,
+                desc: 'Piring terbang misterius dengan kristal nebula pelangi berputar!',
                 color: '#b388ff',
-                shotName: 'Rainbow Crystal Star'
+                shotName: 'Rainbow Nebula Crystal'
+            },
+            phoenix: {
+                id: 'phoenix',
+                name: 'Phoenix-Prime',
+                pilot: '🦅 Burung Api Abadi',
+                rarity: 'legendary',
+                price: 1000,
+                desc: 'Pesawat legendaris dengan semburan burung api surya bersayap dinamis!',
+                color: '#ff3d00',
+                shotName: 'Solar Firebird Nova'
             }
         };
+
+        // Leaderboard storage & defaults
+        const DEFAULT_LEADERBOARD = [
+            { name: 'Capt. Nova', score: 1450, level: 11, ship: 'cosmic', date: '2026-09-01' },
+            { name: 'Star Fox', score: 1120, level: 9, ship: 'fox', date: '2026-09-05' },
+            { name: 'Astro Kitty', score: 860, level: 7, ship: 'cat', date: '2026-09-10' },
+            { name: 'Dino Rex', score: 640, level: 5, ship: 'dino', date: '2026-09-12' },
+            { name: 'Bunny Spark', score: 420, level: 4, ship: 'bunny', date: '2026-09-14' }
+        ];
+
+        function getLeaderboard() {
+            try {
+                const stored = localStorage.getItem('space_impact_leaderboard');
+                if (stored) return JSON.parse(stored);
+            } catch(e) {}
+            return DEFAULT_LEADERBOARD;
+        }
+
+        function saveLeaderboardScore(name, finalScore, finalLevel, shipId) {
+            const list = getLeaderboard();
+            const dateStr = new Date().toISOString().split('T')[0];
+            const cleanName = (name && name.trim()) ? name.trim().substring(0, 12) : 'Pilot Kosmik';
+            list.push({
+                name: cleanName,
+                score: finalScore,
+                level: finalLevel,
+                ship: shipId || selectedShip || 'cat',
+                date: dateStr
+            });
+            list.sort((a, b) => b.score - a.score);
+            const top10 = list.slice(0, 10);
+            localStorage.setItem('space_impact_leaderboard', JSON.stringify(top10));
+            localStorage.setItem('space_impact_last_pilot', cleanName);
+            renderLeaderboard();
+        }
+
+        function renderLeaderboard() {
+            const list = getLeaderboard();
+            const tbody = document.getElementById('leaderboard-tbody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            list.forEach((entry, idx) => {
+                const tr = document.createElement('tr');
+                let rankDisplay = `${idx + 1}`;
+                let rankClass = '';
+                if (idx === 0) { rankDisplay = '🥇 1'; rankClass = 'leaderboard-rank-1'; }
+                else if (idx === 1) { rankDisplay = '🥈 2'; rankClass = 'leaderboard-rank-2'; }
+                else if (idx === 2) { rankDisplay = '🥉 3'; rankClass = 'leaderboard-rank-3'; }
+
+                const shipInfo = SHIPS_DATA[entry.ship] || SHIPS_DATA['cat'];
+
+                tr.innerHTML = `
+                    <td class="${rankClass}">${rankDisplay}</td>
+                    <td style="font-weight: bold; color: #fff;">${escapeHtml(entry.name)}</td>
+                    <td style="color: #b388ff; font-size: 11px;">${shipInfo.name}</td>
+                    <td style="color: #ffd200; font-weight: bold;">⭐ ${entry.score}</td>
+                    <td style="color: #00e5ff;">LVL ${entry.level}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function escapeHtml(str) {
+            return String(str).replace(/[&<>"']/g, function(m) {
+                return {'&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'}[m];
+            });
+        }
+
+        function openLeaderboard() {
+            audio.init();
+            audio.playPop();
+            hapticVibrate(20);
+            renderLeaderboard();
+            const lbModal = document.getElementById('leaderboard-modal');
+            if (lbModal) lbModal.style.display = 'flex';
+        }
+
+        function closeLeaderboard() {
+            audio.init();
+            audio.playPop();
+            hapticVibrate(15);
+            const lbModal = document.getElementById('leaderboard-modal');
+            if (lbModal) lbModal.style.display = 'none';
+        }
 
         let totalCoins = parseInt(localStorage.getItem('space_impact_coins')) || 0;
         let unlockedShips = JSON.parse(localStorage.getItem('space_impact_unlocked_ships')) || ['cat'];
@@ -1305,6 +1736,31 @@
         const soundBtn = document.getElementById('sound-btn');
         const inGameMenuBtn = document.getElementById('in-game-menu-btn');
         const fullscreenBtn = document.getElementById('fullscreen-btn');
+        const toggleCtrlBtn = document.getElementById('toggle-ctrl-btn');
+        const leaderboardHudBtn = document.getElementById('leaderboard-hud-btn');
+        const leaderboardBtnMenu = document.getElementById('leaderboard-btn-menu');
+        const pauseLeaderboardBtn = document.getElementById('pause-leaderboard-btn');
+        const mobileLbBtn = document.getElementById('mobile-lb-btn');
+        const leaderboardModal = document.getElementById('leaderboard-modal');
+        const closeLeaderboardBtn = document.getElementById('close-leaderboard-btn');
+        const closeLeaderboardBtnX = document.getElementById('close-leaderboard-btn-x');
+        const resetLeaderboardBtn = document.getElementById('reset-leaderboard-btn');
+        const pcControlsBar = document.getElementById('pc-controls-bar');
+        const mobileControls = document.getElementById('mobile-controls');
+
+        // Smart Touch / Device Detection
+        const isTouchDevice = ('ontouchstart' in window) || (navigator.maxTouchPoints > 0) || window.matchMedia('(pointer: coarse)').matches;
+        let virtualControlsVisible = isTouchDevice;
+
+        function updateControlsVisibility() {
+            if (mobileControls) {
+                mobileControls.style.display = virtualControlsVisible ? 'flex' : 'none';
+            }
+            if (pcControlsBar) {
+                pcControlsBar.style.display = (!virtualControlsVisible && window.innerWidth >= 800) ? 'flex' : 'none';
+            }
+        }
+        updateControlsVisibility();
 
         const mobilePauseBtn = document.getElementById('mobile-pause-btn');
         const mobileShopBtn = document.getElementById('mobile-shop-btn');
@@ -1764,6 +2220,177 @@
                 ctx.beginPath(); ctx.arc(-2.5, -4, 1, 0, Math.PI * 2); ctx.fill();
             }
 
+            // 6. ROBO-CHIRP (Common)
+            else if (shipType === 'chirp') {
+                ctx.save();
+                ctx.translate(-24, 0);
+                ctx.fillStyle = '#00e5ff';
+                ctx.beginPath(); ctx.ellipse(-10 * flameScale, 0, 10 * flameScale, 5, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.ellipse(-5 * flameScale, 0, 5 * flameScale, 2.5, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+
+                // Wings
+                ctx.fillStyle = '#29b6f6';
+                ctx.beginPath();
+                ctx.ellipse(-4, -13, 11, 5, -0.2, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath();
+                ctx.ellipse(-4, 13, 11, 5, 0.2, 0, Math.PI * 2); ctx.fill();
+
+                // Body
+                const cGrad = ctx.createLinearGradient(0, -12, 0, 12);
+                cGrad.addColorStop(0, '#e1f5fe'); cGrad.addColorStop(1, '#81d4fa');
+                ctx.fillStyle = cGrad;
+                ctx.strokeStyle = '#0288d1';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.ellipse(2, 0, 24, 13, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+                // Yellow Beak
+                ctx.fillStyle = '#ffd600';
+                ctx.beginPath();
+                ctx.moveTo(24, -3); ctx.lineTo(31, 0); ctx.lineTo(24, 3); ctx.closePath(); ctx.fill();
+
+                // Cockpit / Glass
+                ctx.fillStyle = 'rgba(0, 229, 255, 0.4)';
+                ctx.strokeStyle = '#0288d1';
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(4, -2, 10, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+                // Robot bird eye
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(4, -2, 5, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#0277bd';
+                ctx.beginPath(); ctx.arc(5, -2, 2.8, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#00e5ff';
+                ctx.beginPath(); ctx.arc(6, -2.5, 1.2, 0, Math.PI * 2); ctx.fill();
+            }
+
+            // 7. MECHA-FROG (Rare)
+            else if (shipType === 'frog') {
+                ctx.save();
+                ctx.translate(-24, 0);
+                ctx.fillStyle = '#76ff03';
+                ctx.beginPath(); ctx.ellipse(-10 * flameScale, 0, 10 * flameScale, 5, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.ellipse(-5 * flameScale, 0, 5 * flameScale, 2.5, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+
+                // Webbed fins
+                ctx.fillStyle = '#ff9100';
+                ctx.beginPath();
+                ctx.moveTo(-10, -10); ctx.lineTo(-20, -18); ctx.lineTo(-6, -14); ctx.closePath(); ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(-10, 10); ctx.lineTo(-20, 18); ctx.lineTo(-6, 14); ctx.closePath(); ctx.fill();
+
+                // Frog Pod Body
+                const fGrad = ctx.createLinearGradient(0, -14, 0, 14);
+                fGrad.addColorStop(0, '#b9f6ca'); fGrad.addColorStop(1, '#00e676');
+                ctx.fillStyle = fGrad;
+                ctx.strokeStyle = '#1b5e20';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.ellipse(2, 0, 25, 14, 0, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+
+                // Bulbous Frog Eyes on top
+                ctx.fillStyle = '#00e676';
+                ctx.strokeStyle = '#1b5e20';
+                ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.arc(6, -12, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                ctx.beginPath(); ctx.arc(-6, -12, 6, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.arc(6, -12, 4, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(-6, -12, 4, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#1b5e20';
+                ctx.beginPath(); ctx.arc(7, -12, 2, 0, Math.PI * 2); ctx.fill();
+                ctx.beginPath(); ctx.arc(-5, -12, 2, 0, Math.PI * 2); ctx.fill();
+
+                // Cockpit
+                ctx.fillStyle = 'rgba(0, 230, 118, 0.35)';
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 1.5;
+                ctx.beginPath(); ctx.arc(3, 0, 8, 0, Math.PI * 2); ctx.fill(); ctx.stroke();
+            }
+
+            // 8. CYBER-FOX (Epic)
+            else if (shipType === 'fox') {
+                ctx.save();
+                ctx.translate(-26, 0);
+                ctx.fillStyle = '#e040fb';
+                ctx.beginPath(); ctx.ellipse(-12 * flameScale, 0, 12 * flameScale, 6, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#ffffff';
+                ctx.beginPath(); ctx.ellipse(-6 * flameScale, 0, 6 * flameScale, 3, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+
+                // Fox Ears
+                ctx.fillStyle = '#ff6d00';
+                ctx.beginPath(); ctx.moveTo(-6, -10); ctx.lineTo(-10, -20); ctx.lineTo(2, -12); ctx.closePath(); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(-6, 10); ctx.lineTo(-10, 20); ctx.lineTo(2, 12); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#fff';
+                ctx.beginPath(); ctx.moveTo(-6, -12); ctx.lineTo(-9, -17); ctx.lineTo(-1, -13); ctx.closePath(); ctx.fill();
+                ctx.beginPath(); ctx.moveTo(-6, 12); ctx.lineTo(-9, 17); ctx.lineTo(-1, 13); ctx.closePath(); ctx.fill();
+
+                // Sharp Body
+                const foxGrad = ctx.createLinearGradient(0, -12, 0, 12);
+                foxGrad.addColorStop(0, '#ff9e80'); foxGrad.addColorStop(0.5, '#ff6e40'); foxGrad.addColorStop(1, '#ff3d00');
+                ctx.fillStyle = foxGrad;
+                ctx.strokeStyle = '#bf360c';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(28, 0); ctx.lineTo(-20, -12); ctx.lineTo(-14, 0); ctx.lineTo(-20, 12); ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                // Neon Purple Visor
+                ctx.fillStyle = 'rgba(224, 64, 251, 0.6)';
+                ctx.strokeStyle = '#ea80fc';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(16, 0); ctx.lineTo(2, -6); ctx.lineTo(-4, 0); ctx.lineTo(2, 6); ctx.closePath();
+                ctx.fill(); ctx.stroke();
+            }
+
+            // 9. PHOENIX-PRIME (Legendary)
+            else if (shipType === 'phoenix') {
+                const flameWobble = Math.sin(gameTime * 20) * 3;
+                ctx.save();
+                ctx.translate(-26, 0);
+                ctx.fillStyle = '#ff1744';
+                ctx.beginPath(); ctx.ellipse(-14 * flameScale, 0, 14 * flameScale, 8, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = '#ffd600';
+                ctx.beginPath(); ctx.ellipse(-7 * flameScale, 0, 7 * flameScale, 4, 0, 0, Math.PI * 2); ctx.fill();
+                ctx.restore();
+
+                // Blazing Feather Wings
+                ctx.fillStyle = '#ff3d00';
+                ctx.beginPath();
+                ctx.moveTo(8, -8); ctx.lineTo(-8, -24 + flameWobble); ctx.lineTo(-22, -10); ctx.closePath(); ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(8, 8); ctx.lineTo(-8, 24 - flameWobble); ctx.lineTo(-22, 10); ctx.closePath(); ctx.fill();
+
+                ctx.fillStyle = '#ffd600';
+                ctx.beginPath();
+                ctx.moveTo(4, -6); ctx.lineTo(-6, -18 + flameWobble); ctx.lineTo(-16, -8); ctx.closePath(); ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(4, 6); ctx.lineTo(-6, 18 - flameWobble); ctx.lineTo(-16, 8); ctx.closePath(); ctx.fill();
+
+                // Body (Solar Golden Hawk)
+                const phGrad = ctx.createLinearGradient(0, -12, 0, 12);
+                phGrad.addColorStop(0, '#ffd600'); phGrad.addColorStop(0.5, '#ff6d00'); phGrad.addColorStop(1, '#dd2c00');
+                ctx.fillStyle = phGrad;
+                ctx.strokeStyle = '#fff';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(30, 0); ctx.quadraticCurveTo(8, -13, -22, -10); ctx.lineTo(-16, 0); ctx.lineTo(-22, 10); ctx.quadraticCurveTo(8, 13, 30, 0); ctx.closePath();
+                ctx.fill(); ctx.stroke();
+
+                // Solar Core Orb
+                ctx.fillStyle = '#ffffff';
+                ctx.shadowColor = '#ffd600';
+                ctx.shadowBlur = 10;
+                ctx.beginPath(); ctx.arc(4, 0, 6, 0, Math.PI * 2); ctx.fill();
+                ctx.shadowBlur = 0;
+            }
+
             ctx.restore();
         }
 
@@ -1788,18 +2415,21 @@
                 this.shipId = selectedShip || 'cat';
                 this.targetTouchY = null;
                 this.targetTouchX = null;
+                this.isDirectDragging = false;
+                this.isAutoFiringTouch = false;
             }
 
             update(dt) {
                 let dx = 0;
                 let dy = 0;
 
-                // Direct Touch Dragging on canvas support
+                // Direct Touch Dragging on canvas with responsive smooth glide
                 if (this.targetTouchY !== null && this.targetTouchX !== null) {
                     const diffY = this.targetTouchY - (this.y + this.height / 2);
                     const diffX = this.targetTouchX - (this.x + this.width / 2);
-                    if (Math.abs(diffY) > 8) dy = Math.sign(diffY);
-                    if (Math.abs(diffX) > 8) dx = Math.sign(diffX);
+                    this.x += diffX * Math.min(1, 16 * dt);
+                    this.y += diffY * Math.min(1, 16 * dt);
+                    if (Math.abs(diffY) > 6) dy = Math.sign(diffY);
                 }
 
                 // D-Pad / Keyboard inputs
@@ -1808,7 +2438,7 @@
                 if (keys.ArrowUp || keys.w) dy = -1;
                 if (keys.ArrowDown || keys.s) dy = 1;
 
-                if (keys.Space) {
+                if (keys.Space || this.isAutoFiringTouch) {
                     this.shoot(performance.now());
                 }
 
@@ -2231,30 +2861,44 @@
             }
         }
 
-        // --- CARTOON BOSSES ---
+        // --- CARTOON BOSSES (MULTIPLE TIERS FOR EVERY 200 POINTS) ---
         class Boss {
-            constructor(isFinal = false) {
-                this.isFinal = isFinal;
-                this.width = isFinal ? 110 : 90;
-                this.height = isFinal ? 130 : 110;
+            constructor(tier = 1) {
+                this.tier = tier;
+                this.width = (tier >= 4) ? 115 : 95;
+                this.height = (tier >= 4) ? 135 : 115;
                 this.x = canvas.width - this.width - 30;
                 this.y = canvas.height / 2 - this.height / 2;
                 
                 const diffConfig = difficulties[currentDifficulty];
-                const baseHp = isFinal ? 130 : 50;
-                this.maxHp = Math.floor(baseHp * diffConfig.bossHpMult);
+
+                const bossTiers = [
+                    { name: '👑 RAJA JELI BLOBBY 👑', raw: 'Raja Blobby Jeli', hp: 45, speed: 90, fireRate: 920, score: 250, coins: 25 },
+                    { name: '👑 RATU OCTO-PUFF 👑', raw: 'Ratu Octo-Puff', hp: 75, speed: 100, fireRate: 820, score: 450, coins: 40 },
+                    { name: '👑 JENDERAL CHOMPY 👑', raw: 'Jenderal Chompy', hp: 110, speed: 110, fireRate: 720, score: 700, coins: 55 },
+                    { name: '👑 KAISAR TENTAKING 👑', raw: 'Kaisar Tentaking', hp: 150, speed: 120, fireRate: 620, score: 1000, coins: 75 },
+                    { name: '👑 DEWA BINTANG VOID-LORD 👑', raw: 'Dewa Bintang Void-Lord', hp: 200, speed: 130, fireRate: 540, score: 1500, coins: 100 }
+                ];
+
+                const infoIndex = Math.min(tier - 1, bossTiers.length - 1);
+                const info = bossTiers[infoIndex];
+
+                const extraHp = (tier > 5) ? (tier - 5) * 45 : 0;
+                this.rawName = info.raw;
+                this.titleName = (tier > 5) ? `👑 VOID-LORD TINGKAT ${tier} 👑` : info.name;
+                this.maxHp = Math.floor((info.hp + extraHp) * diffConfig.bossHpMult);
                 this.hp = this.maxHp;
 
-                this.speed = (isFinal ? 120 : 90) * diffConfig.speedMult;
+                this.speed = info.speed * diffConfig.speedMult;
                 this.direction = 1;
                 this.lastShot = 0;
-                this.fireRate = isFinal ? 600 : 900;
+                this.fireRate = Math.max(400, info.fireRate - (tier * 15));
                 this.hitTime = 0;
-                this.scoreValue = isFinal ? 1000 : 250;
-                this.coinReward = isFinal ? 60 : 25;
+                this.scoreValue = info.score + (tier > 5 ? (tier - 5) * 300 : 0);
+                this.coinReward = info.coins + (tier > 5 ? (tier - 5) * 20 : 0);
 
                 bossHud.style.display = 'flex';
-                bossNameText.innerText = isFinal ? '👑 KAISAR KOSMIK TENTAKING 👑' : '👑 RAJA ALIEN BLOOP 👑';
+                bossNameText.innerText = this.titleName;
                 this.updateHud();
                 audio.playPowerup();
             }
@@ -2271,11 +2915,30 @@
 
                 if (timestamp - this.lastShot > this.fireRate) {
                     audio.playShoot();
-                    projectiles.push(new Projectile(this.x, this.y + this.height / 2, false, 0));
-                    
-                    if (this.isFinal || currentDifficulty === 'hard') {
-                        projectiles.push(new Projectile(this.x, this.y + 20, false, -90));
-                        projectiles.push(new Projectile(this.x, this.y + this.height - 20, false, 90));
+
+                    if (this.tier === 1) {
+                        // Single heavy slime shot
+                        projectiles.push(new Projectile(this.x, this.y + this.height / 2, false, 0));
+                    } else if (this.tier === 2) {
+                        // Double pearl spread
+                        projectiles.push(new Projectile(this.x, this.y + 25, false, -35));
+                        projectiles.push(new Projectile(this.x, this.y + this.height - 25, false, 35));
+                    } else if (this.tier === 3) {
+                        // Twin chompy horn lasers
+                        projectiles.push(new Projectile(this.x, this.y + this.height / 2, false, 0));
+                        projectiles.push(new Projectile(this.x, this.y + 20, false, -60));
+                        projectiles.push(new Projectile(this.x, this.y + this.height - 20, false, 60));
+                    } else if (this.tier === 4) {
+                        // 3-way cosmic star spread
+                        projectiles.push(new Projectile(this.x, this.y + this.height / 2, false, 0));
+                        projectiles.push(new Projectile(this.x, this.y + 15, false, -90));
+                        projectiles.push(new Projectile(this.x, this.y + this.height - 15, false, 90));
+                    } else {
+                        // 4-way celestial barrage
+                        projectiles.push(new Projectile(this.x, this.y + 15, false, -120));
+                        projectiles.push(new Projectile(this.x, this.y + this.height * 0.35, false, -40));
+                        projectiles.push(new Projectile(this.x, this.y + this.height * 0.65, false, 40));
+                        projectiles.push(new Projectile(this.x, this.y + this.height - 15, false, 120));
                     }
                     this.lastShot = timestamp;
                 }
@@ -2291,16 +2954,16 @@
                 const squish = 1 + 0.08 * Math.sin(gameTime * 7);
                 ctx.scale(2 - squish, squish);
 
-                if (!this.isFinal) {
+                // --- TIER 1: RAJA JELI BLOBBY ---
+                if (this.tier === 1) {
                     ctx.fillStyle = isFlash ? '#ffffff' : '#7c4dff';
                     ctx.strokeStyle = isFlash ? '#ffffff' : '#512da8';
                     ctx.lineWidth = 5;
-
                     ctx.beginPath();
                     ctx.ellipse(0, 10, 42, 45, 0, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.stroke();
+                    ctx.fill(); ctx.stroke();
 
+                    // Slime ripples
                     ctx.fillStyle = isFlash ? '#ffffff' : '#651fff';
                     for (let i = -2; i <= 2; i++) {
                         const wave = Math.sin(gameTime * 10 + i) * 6;
@@ -2309,6 +2972,7 @@
                         ctx.fill();
                     }
 
+                    // Crown
                     const crownBob = Math.sin(gameTime * 6) * 4;
                     ctx.fillStyle = '#ffd200';
                     ctx.strokeStyle = '#ff8f00';
@@ -2322,14 +2986,9 @@
                     ctx.lineTo(30, -52 + crownBob);
                     ctx.lineTo(24, -36 + crownBob);
                     ctx.closePath();
-                    ctx.fill();
-                    ctx.stroke();
+                    ctx.fill(); ctx.stroke();
 
-                    ctx.fillStyle = '#ff1744';
-                    ctx.beginPath();
-                    ctx.arc(0, -42 + crownBob, 4, 0, Math.PI * 2);
-                    ctx.fill();
-
+                    // Big Cyclops Eye
                     ctx.fillStyle = '#ffffff';
                     ctx.beginPath(); ctx.arc(-10, -4, 14, 0, Math.PI * 2); ctx.fill();
                     ctx.fillStyle = isFlash ? '#d50000' : '#311b92';
@@ -2337,62 +2996,169 @@
                     ctx.fillStyle = '#fff';
                     ctx.beginPath(); ctx.arc(-16, -7, 3, 0, Math.PI * 2); ctx.fill();
 
-                    ctx.fillStyle = '#ffffff';
+                    // Cute mouth
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 3;
                     ctx.beginPath();
-                    ctx.arc(-24, 14, 8, 0, Math.PI * 2);
-                    ctx.arc(10, -6, 9, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.fillStyle = '#311b92';
-                    ctx.beginPath();
-                    ctx.arc(-26, 14, 4, 0, Math.PI * 2);
-                    ctx.arc(8, -6, 4.5, 0, Math.PI * 2);
-                    ctx.fill();
+                    ctx.arc(-10, 22, 10, 0.2, Math.PI - 0.2);
+                    ctx.stroke();
+                }
 
-                    if (isFlash) {
-                        ctx.fillStyle = '#fff';
-                        ctx.beginPath(); ctx.arc(-10, 24, 8, 0, Math.PI * 2); ctx.fill();
-                    } else {
-                        ctx.strokeStyle = '#fff';
-                        ctx.lineWidth = 3.5;
+                // --- TIER 2: RATU OCTO-PUFF ---
+                else if (this.tier === 2) {
+                    ctx.fillStyle = isFlash ? '#ffffff' : '#f06292';
+                    ctx.strokeStyle = isFlash ? '#ffffff' : '#ad1457';
+                    ctx.lineWidth = 5;
+                    ctx.beginPath();
+                    ctx.ellipse(0, 0, 44, 42, 0, 0, Math.PI * 2);
+                    ctx.fill(); ctx.stroke();
+
+                    // Pearl Tiara
+                    ctx.fillStyle = '#00e5ff';
+                    ctx.beginPath();
+                    ctx.arc(0, -42, 6, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#ffd200';
+                    ctx.beginPath();
+                    ctx.arc(-16, -38, 5, 0, Math.PI * 2);
+                    ctx.arc(16, -38, 5, 0, Math.PI * 2); ctx.fill();
+
+                    // Multiple wavy tentacles
+                    ctx.strokeStyle = isFlash ? '#fff' : '#ec407a';
+                    ctx.lineWidth = 4;
+                    for (let i = -3; i <= 3; i++) {
+                        const wave = Math.sin(gameTime * 10 + i * 0.8) * 12;
                         ctx.beginPath();
-                        ctx.arc(-10, 22, 10, 0.2, Math.PI - 0.2);
+                        ctx.moveTo(i * 12, 36);
+                        ctx.quadraticCurveTo(i * 14 + wave, 55, i * 16, 75);
                         ctx.stroke();
                     }
 
-                } else {
+                    // Cute big eyes with eyelashes
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath(); ctx.arc(-16, -6, 11, 0, Math.PI * 2);
+                    ctx.arc(14, -6, 11, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#880e4f';
+                    ctx.beginPath(); ctx.arc(-18, -6, 5.5, 0, Math.PI * 2);
+                    ctx.arc(12, -6, 5.5, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#fff';
+                    ctx.beginPath(); ctx.arc(-20, -9, 2.5, 0, Math.PI * 2);
+                    ctx.arc(10, -9, 2.5, 0, Math.PI * 2); ctx.fill();
+                }
+
+                // --- TIER 3: JENDERAL CHOMPY ---
+                else if (this.tier === 3) {
+                    ctx.fillStyle = isFlash ? '#ffffff' : '#ff9100';
+                    ctx.strokeStyle = isFlash ? '#ffffff' : '#e65100';
+                    ctx.lineWidth = 5;
+                    ctx.beginPath();
+                    ctx.arc(0, 5, 46, 0, Math.PI * 2);
+                    ctx.fill(); ctx.stroke();
+
+                    // Fiery Spiked Purple Horns
+                    ctx.fillStyle = '#7c4dff';
+                    ctx.strokeStyle = '#311b92';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    ctx.moveTo(-18, -35); ctx.lineTo(-32, -68); ctx.lineTo(-6, -42); ctx.closePath(); ctx.fill(); ctx.stroke();
+                    ctx.beginPath();
+                    ctx.moveTo(18, -35); ctx.lineTo(32, -68); ctx.lineTo(6, -42); ctx.closePath(); ctx.fill(); ctx.stroke();
+
+                    // Snapping toothy mouth
+                    const mOpen = 8 + Math.sin(gameTime * 12) * 6;
+                    ctx.fillStyle = '#4a148c';
+                    ctx.beginPath();
+                    ctx.ellipse(0, 16, 22, mOpen, 0, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#ffffff';
+                    for (let t = -3; t <= 3; t++) {
+                        ctx.beginPath();
+                        ctx.moveTo(t * 6, 16 - mOpen); ctx.lineTo(t * 6 + 3, 16); ctx.lineTo(t * 6 + 6, 16 - mOpen); ctx.fill();
+                    }
+
+                    // Fierce Eyes
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath(); ctx.arc(-15, -8, 10, 0, Math.PI * 2);
+                    ctx.arc(15, -8, 10, 0, Math.PI * 2); ctx.fill();
+                    ctx.fillStyle = '#d50000';
+                    ctx.beginPath(); ctx.arc(-17, -8, 5, 0, Math.PI * 2);
+                    ctx.arc(13, -8, 5, 0, Math.PI * 2); ctx.fill();
+                }
+
+                // --- TIER 4: KAISAR TENTAKING ---
+                else if (this.tier === 4) {
                     ctx.fillStyle = isFlash ? '#ffffff' : '#00b0ff';
                     ctx.strokeStyle = isFlash ? '#ffffff' : '#00e5ff';
                     ctx.lineWidth = 6;
-
                     ctx.beginPath();
                     ctx.ellipse(0, 0, 50, 58, 0, 0, Math.PI * 2);
-                    ctx.fill();
-                    ctx.stroke();
+                    ctx.fill(); ctx.stroke();
 
+                    // Golden Dragon Horns
                     ctx.fillStyle = '#ffd200';
                     ctx.beginPath();
-                    ctx.moveTo(10, -45); ctx.lineTo(35, -75); ctx.lineTo(25, -40); ctx.closePath(); ctx.fill();
+                    ctx.moveTo(10, -45); ctx.lineTo(38, -80); ctx.lineTo(26, -40); ctx.closePath(); ctx.fill();
                     ctx.beginPath();
-                    ctx.moveTo(-10, -45); ctx.lineTo(-35, -75); ctx.lineTo(-25, -40); ctx.closePath(); ctx.fill();
+                    ctx.moveTo(-10, -45); ctx.lineTo(-38, -80); ctx.lineTo(-26, -40); ctx.closePath(); ctx.fill();
 
+                    // Crystal 3-eyed dragon face
                     ctx.fillStyle = '#ff1744';
                     ctx.beginPath();
                     ctx.ellipse(-18, -10, 12, 7, -0.2, 0, Math.PI * 2);
                     ctx.ellipse(12, -10, 12, 7, 0.2, 0, Math.PI * 2);
                     ctx.fill();
-
                     ctx.fillStyle = '#ffd200';
                     ctx.beginPath();
-                    ctx.arc(-20, -10, 4, 0, Math.PI * 2);
-                    ctx.arc(10, -10, 4, 0, Math.PI * 2);
-                    ctx.fill();
+                    ctx.arc(0, -22, 7, 0, Math.PI * 2); ctx.fill();
 
+                    // Tentacle Energy Generators
                     ctx.strokeStyle = '#ffd200';
                     ctx.lineWidth = 4;
                     for (let i = -2; i <= 2; i++) {
-                        const wave = Math.sin(gameTime * 12 + i) * 10;
+                        const wave = Math.sin(gameTime * 12 + i) * 12;
                         ctx.beginPath();
-                        ctx.moveTo(i * 16, 35); ctx.lineTo(i * 18 + wave, 65); ctx.stroke();
+                        ctx.moveTo(i * 16, 35); ctx.lineTo(i * 18 + wave, 68); ctx.stroke();
+                    }
+                }
+
+                // --- TIER 5+: DEWA BINTANG VOID-LORD ---
+                else {
+                    const voidHue = (gameTime * 180) % 360;
+                    ctx.fillStyle = isFlash ? '#ffffff' : '#12002b';
+                    ctx.strokeStyle = `hsl(${voidHue}, 100%, 70%)`;
+                    ctx.lineWidth = 6;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 54, 0, Math.PI * 2);
+                    ctx.fill(); ctx.stroke();
+
+                    // Spinning Golden Cosmic Halo
+                    ctx.save();
+                    ctx.rotate(gameTime * 2);
+                    ctx.strokeStyle = '#ffd700';
+                    ctx.lineWidth = 3.5;
+                    ctx.setLineDash([12, 8]);
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 72, 0, Math.PI * 2);
+                    ctx.stroke();
+                    ctx.restore();
+
+                    // Central Prismatic Singularity Eye
+                    ctx.fillStyle = `hsl(${voidHue}, 100%, 65%)`;
+                    ctx.shadowColor = `hsl(${voidHue}, 100%, 75%)`;
+                    ctx.shadowBlur = 18;
+                    ctx.beginPath();
+                    ctx.arc(0, 0, 20, 0, Math.PI * 2); ctx.fill();
+                    ctx.shadowBlur = 0;
+                    ctx.fillStyle = '#ffffff';
+                    ctx.beginPath(); ctx.arc(-3, -3, 6, 0, Math.PI * 2); ctx.fill();
+
+                    // Void energy tendrils
+                    ctx.strokeStyle = `hsl(${(voidHue + 180) % 360}, 100%, 70%)`;
+                    ctx.lineWidth = 4;
+                    for (let i = 0; i < 6; i++) {
+                        const angle = (i / 6) * Math.PI * 2 + gameTime * 3;
+                        const rx = Math.cos(angle) * 44;
+                        const ry = Math.sin(angle) * 44;
+                        ctx.beginPath();
+                        ctx.arc(rx, ry, 6, 0, Math.PI * 2); ctx.stroke();
                     }
                 }
 
@@ -2413,24 +3179,25 @@
             }
         }
 
-        // --- PROJECTILES ---
+        // --- PROJECTILES (DISTINCT ANIMATIONS FOR EVERY SHIP) ---
         class Projectile {
             constructor(x, y, isPlayer, vy = 0, shipType = 'cat') {
                 this.x = x;
                 this.y = y;
                 this.isPlayer = isPlayer;
-                this.speed = isPlayer ? 590 : -260;
+                this.speed = isPlayer ? 600 : -260;
                 this.vy = vy;
-                this.radius = isPlayer ? 6 : 7;
+                this.radius = isPlayer ? 7 : 7;
                 this.markedForDeletion = false;
                 this.shipType = shipType;
+                this.createdTime = performance.now();
             }
 
             update(dt) {
                 this.x += this.speed * dt;
                 this.y += this.vy * dt;
 
-                if (this.x > canvas.width + 30 || this.x < -30 || this.y < -30 || this.y > canvas.height + 30) {
+                if (this.x > canvas.width + 35 || this.x < -35 || this.y < -35 || this.y > canvas.height + 35) {
                     this.markedForDeletion = true;
                 }
             }
@@ -2438,64 +3205,237 @@
             draw(ctx) {
                 ctx.save();
                 if (this.isPlayer) {
-                    if (this.shipType === 'bunny') {
+                    // --- 1. ASTRO-CAT: Golden Twinkle Star Dart ---
+                    if (this.shipType === 'cat') {
+                        ctx.translate(this.x, this.y);
+                        ctx.rotate(gameTime * 14);
+
+                        ctx.fillStyle = '#ffd200';
+                        ctx.shadowColor = '#fff176';
+                        ctx.shadowBlur = 10;
+
+                        // 4-point sparkling star
+                        ctx.beginPath();
+                        ctx.moveTo(0, -9);
+                        ctx.quadraticCurveTo(0, 0, 9, 0);
+                        ctx.quadraticCurveTo(0, 0, 0, 9);
+                        ctx.quadraticCurveTo(0, 0, -9, 0);
+                        ctx.quadraticCurveTo(0, 0, 0, -9);
+                        ctx.fill();
+
+                        ctx.fillStyle = '#ffffff';
+                        ctx.beginPath();
+                        ctx.arc(0, 0, 3, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    // --- 2. ROBO-CHIRP: Cyan Sonic Rings ---
+                    else if (this.shipType === 'chirp') {
+                        ctx.translate(this.x, this.y);
+                        const wavePhase = (gameTime * 25) % Math.PI;
+
+                        ctx.strokeStyle = '#00e5ff';
+                        ctx.shadowColor = '#80d8ff';
+                        ctx.shadowBlur = 10;
+                        ctx.lineWidth = 3;
+
+                        ctx.beginPath();
+                        ctx.ellipse(0, 0, 10 + Math.sin(wavePhase) * 2, 7 + Math.cos(wavePhase) * 2, 0, 0, Math.PI * 2);
+                        ctx.stroke();
+
+                        ctx.fillStyle = '#e1f5fe';
+                        ctx.beginPath();
+                        ctx.arc(2, 0, 4.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
+                    // --- 3. CANDY-BUNNY: Sweet Heart Berry ---
+                    else if (this.shipType === 'bunny') {
+                        ctx.translate(this.x, this.y);
+                        ctx.rotate(0.2 * Math.sin(gameTime * 10));
+
                         ctx.fillStyle = '#ff4081';
                         ctx.shadowColor = '#ff80ab';
-                        ctx.shadowBlur = 10;
+                        ctx.shadowBlur = 12;
+
+                        // Cute heart shape
                         ctx.beginPath();
-                        ctx.ellipse(this.x, this.y, 11, 5, 0, 0, Math.PI * 2);
+                        ctx.moveTo(0, 2);
+                        ctx.bezierCurveTo(-6, -6, -11, 2, 0, 10);
+                        ctx.bezierCurveTo(11, 2, 6, -6, 0, 2);
                         ctx.fill();
+
                         ctx.fillStyle = '#ffffff';
                         ctx.beginPath();
-                        ctx.ellipse(this.x + 2, this.y, 6, 2, 0, 0, Math.PI * 2);
+                        ctx.arc(-3, 0, 1.8, 0, Math.PI * 2);
+                        ctx.arc(2, 2, 1.2, 0, Math.PI * 2);
                         ctx.fill();
-                    } else if (this.shipType === 'puppy') {
+                    }
+
+                    // --- 4. MECHA-FROG: Bouncing Plasma Bubble ---
+                    else if (this.shipType === 'frog') {
+                        ctx.translate(this.x, this.y);
+                        const wobble = 1 + 0.15 * Math.sin(gameTime * 18);
+
+                        ctx.fillStyle = 'rgba(0, 230, 118, 0.45)';
+                        ctx.strokeStyle = '#00e676';
+                        ctx.lineWidth = 2.5;
+                        ctx.shadowColor = '#69f0ae';
+                        ctx.shadowBlur = 12;
+
+                        ctx.beginPath();
+                        ctx.ellipse(0, 0, 9 * wobble, 9 / wobble, 0, 0, Math.PI * 2);
+                        ctx.fill(); ctx.stroke();
+
+                        // Glowing inner plasma nucleus
+                        ctx.fillStyle = '#76ff03';
+                        ctx.beginPath();
+                        ctx.arc(1, 0, 4, 0, Math.PI * 2); ctx.fill();
+
+                        // Specular shine
+                        ctx.fillStyle = '#ffffff';
+                        ctx.beginPath();
+                        ctx.arc(-3, -3, 2, 0, Math.PI * 2); ctx.fill();
+                    }
+
+                    // --- 5. PUPPY-HERO: Golden Solar Bone ---
+                    else if (this.shipType === 'puppy') {
+                        ctx.translate(this.x, this.y);
+                        ctx.rotate(gameTime * 12);
+
                         ctx.fillStyle = '#ffd200';
                         ctx.shadowColor = '#ff9100';
-                        ctx.shadowBlur = 10;
+                        ctx.shadowBlur = 12;
+
+                        // Golden Bone projectile
+                        ctx.fillRect(-7, -2.5, 14, 5);
                         ctx.beginPath();
-                        ctx.ellipse(this.x, this.y, 12, 5, 0, 0, Math.PI * 2);
+                        ctx.arc(-7, -4, 3, 0, Math.PI * 2);
+                        ctx.arc(-7, 4, 3, 0, Math.PI * 2);
+                        ctx.arc(7, -4, 3, 0, Math.PI * 2);
+                        ctx.arc(7, 4, 3, 0, Math.PI * 2);
                         ctx.fill();
+
                         ctx.fillStyle = '#ffffff';
-                        ctx.beginPath();
-                        ctx.ellipse(this.x + 2, this.y, 7, 2, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                    } else if (this.shipType === 'dino') {
+                        ctx.fillRect(-4, -1, 8, 2);
+                    }
+
+                    // --- 6. DINO-JET: Emerald Dragon Flame ---
+                    else if (this.shipType === 'dino') {
+                        ctx.translate(this.x, this.y);
+
                         ctx.fillStyle = '#00e676';
                         ctx.shadowColor = '#b9f6ca';
-                        ctx.shadowBlur = 10;
+                        ctx.shadowBlur = 14;
+
+                        // Jagged flame claw
+                        const flicker = Math.sin(gameTime * 30) * 2;
                         ctx.beginPath();
-                        ctx.ellipse(this.x, this.y, 12, 5.5, 0, 0, Math.PI * 2);
+                        ctx.moveTo(12, 0);
+                        ctx.lineTo(2, -7 + flicker);
+                        ctx.lineTo(-8, -4);
+                        ctx.lineTo(-12, 0);
+                        ctx.lineTo(-8, 4);
+                        ctx.lineTo(2, 7 - flicker);
+                        ctx.closePath();
                         ctx.fill();
+
                         ctx.fillStyle = '#ffffff';
                         ctx.beginPath();
-                        ctx.ellipse(this.x + 2, this.y, 6, 2.5, 0, 0, Math.PI * 2);
+                        ctx.ellipse(3, 0, 6, 2.5, 0, 0, Math.PI * 2);
                         ctx.fill();
-                    } else if (this.shipType === 'cosmic') {
-                        const hue = (gameTime * 250) % 360;
+                    }
+
+                    // --- 7. CYBER-FOX: Lightning Violet Javelin ---
+                    else if (this.shipType === 'fox') {
+                        ctx.translate(this.x, this.y);
+
+                        ctx.fillStyle = '#ea80fc';
+                        ctx.strokeStyle = '#e040fb';
+                        ctx.shadowColor = '#d500f9';
+                        ctx.shadowBlur = 15;
+                        ctx.lineWidth = 2;
+
+                        // Sharp needle javelin
+                        ctx.beginPath();
+                        ctx.moveTo(15, 0);
+                        ctx.lineTo(-8, -5);
+                        ctx.lineTo(-4, 0);
+                        ctx.lineTo(-8, 5);
+                        ctx.closePath();
+                        ctx.fill(); ctx.stroke();
+
+                        // Electric bolt spark line
+                        const spark = (Math.random() - 0.5) * 6;
+                        ctx.strokeStyle = '#ffffff';
+                        ctx.lineWidth = 1.5;
+                        ctx.beginPath();
+                        ctx.moveTo(-10, 0);
+                        ctx.lineTo(-2, spark);
+                        ctx.lineTo(8, 0);
+                        ctx.stroke();
+                    }
+
+                    // --- 8. COSMIC-UFO: Rainbow Nebula Crystal ---
+                    else if (this.shipType === 'cosmic') {
+                        ctx.translate(this.x, this.y);
+                        ctx.rotate(-gameTime * 8);
+
+                        const hue = (gameTime * 280) % 360;
                         ctx.fillStyle = `hsl(${hue}, 100%, 65%)`;
                         ctx.shadowColor = `hsl(${hue}, 100%, 75%)`;
-                        ctx.shadowBlur = 12;
+                        ctx.shadowBlur = 14;
+
+                        // 8-pointed diamond crystal
                         ctx.beginPath();
-                        ctx.ellipse(this.x, this.y, 13, 5.5, 0, 0, Math.PI * 2);
+                        for (let p = 0; p < 8; p++) {
+                            const angle = (p / 8) * Math.PI * 2;
+                            const r = (p % 2 === 0) ? 11 : 4.5;
+                            const px = Math.cos(angle) * r;
+                            const py = Math.sin(angle) * r;
+                            if (p === 0) ctx.moveTo(px, py);
+                            else ctx.lineTo(px, py);
+                        }
+                        ctx.closePath();
                         ctx.fill();
+
+                        ctx.fillStyle = '#ffffff';
+                        ctx.beginPath(); ctx.arc(0, 0, 3, 0, Math.PI * 2); ctx.fill();
+                    }
+
+                    // --- 9. PHOENIX-PRIME: Solar Firebird Nova ---
+                    else if (this.shipType === 'phoenix') {
+                        ctx.translate(this.x, this.y);
+                        const wingFlap = Math.sin(gameTime * 28) * 5;
+
+                        ctx.fillStyle = '#ff3d00';
+                        ctx.shadowColor = '#ffd600';
+                        ctx.shadowBlur = 15;
+
+                        // Mini firebird wings
+                        ctx.beginPath();
+                        ctx.moveTo(10, 0);
+                        ctx.lineTo(-2, -9 + wingFlap);
+                        ctx.lineTo(-8, -3);
+                        ctx.lineTo(-12, 0);
+                        ctx.lineTo(-8, 3);
+                        ctx.lineTo(-2, 9 - wingFlap);
+                        ctx.closePath();
+                        ctx.fill();
+
+                        // Blazing solar core
+                        ctx.fillStyle = '#ffd600';
+                        ctx.beginPath();
+                        ctx.arc(2, 0, 4.5, 0, Math.PI * 2);
+                        ctx.fill();
+
                         ctx.fillStyle = '#ffffff';
                         ctx.beginPath();
-                        ctx.ellipse(this.x + 2, this.y, 7, 2.5, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                    } else {
-                        ctx.fillStyle = '#ffd200';
-                        ctx.shadowColor = '#00e5ff';
-                        ctx.shadowBlur = 10;
-                        ctx.beginPath();
-                        ctx.ellipse(this.x, this.y, 11, 4.5, 0, 0, Math.PI * 2);
-                        ctx.fill();
-                        ctx.fillStyle = '#ffffff';
-                        ctx.beginPath();
-                        ctx.ellipse(this.x + 2, this.y, 6, 2, 0, 0, Math.PI * 2);
+                        ctx.arc(3, 0, 2.5, 0, Math.PI * 2);
                         ctx.fill();
                     }
                 } else {
+                    // Enemy / Boss Red Bullet
                     ctx.fillStyle = '#ff1744';
                     ctx.shadowColor = '#ff4081';
                     ctx.shadowBlur = 10;
@@ -2711,7 +3651,7 @@
             }
         }
 
-        // --- GLOBAL ARRAYS ---
+        // --- GLOBAL ARRAYS & BOSS TRACKING ---
         let player;
         let wingman = null;
         let projectiles = [];
@@ -2721,6 +3661,7 @@
         let floatingTexts = [];
         let powerups = [];
         let boss = null;
+        let nextBossScore = 200;
         
         let enemySpawnTimer = 0;
         let enemySpawnInterval = 2000;
@@ -2752,6 +3693,7 @@
             powerups = [];
             boss = null;
             score = 0;
+            nextBossScore = 200;
             
             const diffConfig = difficulties[currentDifficulty];
             lives = diffConfig.startLives;
@@ -2767,6 +3709,7 @@
             overlay.style.display = 'none';
             pauseModal.style.display = 'none';
             shopModal.style.display = 'none';
+            if (leaderboardModal) leaderboardModal.style.display = 'none';
             lastTime = performance.now();
             animationId = requestAnimationFrame(gameLoop);
         }
@@ -2827,13 +3770,21 @@
                 audio.playPowerup();
                 hapticVibrate([30, 40, 30]);
                 floatingTexts.push(new FloatingText(canvas.width / 2, canvas.height / 2, `LEVEL ${level}! 🚀`, '#00e5ff'));
-                
-                if ((level === 5 || level === 10) && boss === null) {
-                    enemies = [];
-                    boss = new Boss(level >= 10);
-                }
             }
             levelDisplay.innerText = `🚀 LVL ${level}`;
+
+            // --- BOSS SPAWN: EVERY MULTIPLE OF 200 POINTS ---
+            if (score >= nextBossScore && boss === null) {
+                const tier = Math.max(1, Math.floor(nextBossScore / 200));
+                nextBossScore += 200;
+                enemies = [];
+                boss = new Boss(tier);
+                showNotice(`⚠️ BOSS TINGKAT ${tier}: ${boss.rawName}! ⚠️`);
+                floatingTexts.push(new FloatingText(canvas.width / 2, canvas.height / 2 - 40, `⚠️ BOSS BATTLE! ⚠️`, '#ff1744'));
+                triggerScreenShake(0.6, 12);
+                audio.playPowerup();
+                hapticVibrate([50, 40, 50, 40, 80]);
+            }
         }
 
         function gameOver() {
@@ -2844,21 +3795,50 @@
             hideNotice();
             saveGameData();
 
+            const lastPilot = localStorage.getItem('space_impact_last_pilot') || 'Pilot Bintang';
+
             overlay.innerHTML = `
                 <h1 style="color: #ff1744;">GAME SELESAI! 💥</h1>
                 <p>Petualangan yang Luar Biasa!</p>
-                <div style="background: #ede6fc; padding: 10px 20px; border-radius: 16px; margin: 4px 0; width: 100%;">
-                    <p style="font-size: 18px; color: #55338a;">Skor Akhir: <b>${score}</b></p>
-                    <p style="font-size: 15px; color: #7c4dff;">Level: <b>${level}</b> | Total Koin: <b>🪙 ${totalCoins}</b></p>
+                <div style="background: #ede6fc; padding: 8px 16px; border-radius: 16px; margin: 4px 0; width: 100%;">
+                    <p style="font-size: 17px; color: #55338a;">Skor Akhir: <b>${score}</b></p>
+                    <p style="font-size: 14px; color: #7c4dff;">Level: <b>${level}</b> | Total Koin: <b>🪙 ${totalCoins}</b></p>
                 </div>
-                <div style="display: flex; gap: 8px; width: 100%; justify-content: center;">
-                    <button id="shop-btn-gameover" class="btn-shop" style="width: 48%; font-size: 16px;">🛒 TOKO</button>
-                    <button id="restart-btn" class="btn-primary" style="width: 48%; font-size: 18px; margin-top: 0;">MAIN LAGI! 🚀</button>
+
+                <div style="width: 100%; display: flex; gap: 6px; align-items: center; margin: 4px 0;">
+                    <input type="text" id="leaderboard-name-input" maxlength="12" placeholder="Nama Pilot..." value="${escapeHtml(lastPilot)}" style="flex: 1; padding: 8px 12px; border-radius: 20px; border: 2px solid #7c4dff; font-family: 'Fredoka', cursive; font-size: 14px; outline: none; background: #fff; color: #333;">
+                    <button id="save-leaderboard-btn" class="btn-chip" style="background: #00e676; color: #004d20; border-color: #00c853; font-weight: bold; white-space: nowrap;">SIMPAN 💾</button>
+                </div>
+                <div id="save-msg" style="font-size: 12px; color: #00c853; font-weight: bold; display: none;">REKOR TERSIMPAN KE LEADERBOARD! ⭐</div>
+
+                <div style="display: flex; gap: 6px; width: 100%; justify-content: center; margin-top: 4px;">
+                    <button id="shop-btn-gameover" class="btn-shop" style="width: 32%; font-size: 15px; padding: 8px 10px;">🛒 TOKO</button>
+                    <button id="lb-btn-gameover" class="btn-chip" style="width: 32%; font-size: 14px; font-weight: bold; background: #ede6fc; border-color: #ffd200; color: #512da8; padding: 8px 10px;">🏆 JUARA</button>
+                    <button id="restart-btn" class="btn-primary" style="width: 36%; font-size: 16px; margin-top: 0; padding: 8px 12px;">MAIN! 🚀</button>
                 </div>
             `;
             overlay.style.display = 'flex';
             document.getElementById('restart-btn').addEventListener('click', initGame);
             document.getElementById('shop-btn-gameover').addEventListener('click', () => openShop('gameover'));
+            document.getElementById('lb-btn-gameover').addEventListener('click', openLeaderboard);
+
+            const saveBtn = document.getElementById('save-leaderboard-btn');
+            const nameInput = document.getElementById('leaderboard-name-input');
+            const saveMsg = document.getElementById('save-msg');
+
+            saveBtn.addEventListener('click', () => {
+                audio.init();
+                const name = nameInput.value;
+                saveLeaderboardScore(name, score, level, (player ? player.shipId : selectedShip));
+                saveBtn.disabled = true;
+                saveBtn.style.opacity = '0.6';
+                nameInput.disabled = true;
+                saveMsg.style.display = 'block';
+                hapticVibrate([30, 40, 30]);
+                setTimeout(() => {
+                    openLeaderboard();
+                }, 700);
+            });
         }
 
         function takeDamage() {
@@ -3182,7 +4162,18 @@
                 const isEquipped = (selectedShip === shipKey);
 
                 const card = document.createElement('div');
-                card.className = `ship-card ${isEquipped ? 'equipped' : ''}`;
+                const rKey = ship.rarity || 'common';
+                card.className = `ship-card rarity-card-${rKey} ${isEquipped ? 'equipped' : ''}`;
+
+                const rarityBadge = document.createElement('div');
+                const rarityLabels = {
+                    common: '⚪ COMMON',
+                    rare: '🔵 RARE',
+                    epic: '🟣 EPIC',
+                    legendary: '🟡 LEGENDARY'
+                };
+                rarityBadge.className = `rarity-badge rarity-${rKey}`;
+                rarityBadge.innerText = rarityLabels[rKey] || 'COMMON';
 
                 const previewBox = document.createElement('div');
                 previewBox.className = 'ship-preview-box';
@@ -3199,6 +4190,10 @@
                 const pilotEl = document.createElement('div');
                 pilotEl.className = 'ship-pilot';
                 pilotEl.innerText = ship.pilot;
+
+                const shotInfo = document.createElement('div');
+                shotInfo.className = 'ship-shot-info';
+                shotInfo.innerText = `💥 ${ship.shotName}`;
 
                 const priceBadge = document.createElement('div');
                 if (isUnlocked) {
@@ -3258,9 +4253,11 @@
                     });
                 }
 
+                card.appendChild(rarityBadge);
                 card.appendChild(previewBox);
                 card.appendChild(nameEl);
                 card.appendChild(pilotEl);
+                card.appendChild(shotInfo);
                 card.appendChild(priceBadge);
                 card.appendChild(descEl);
                 card.appendChild(actionBtn);
@@ -3276,6 +4273,29 @@
                     pauseGame();
                 } else if (gameState === 'PAUSED') {
                     resumeGame();
+                }
+                return;
+            }
+
+            if (e.key === 'f' || e.key === 'F') {
+                toggleFullscreen();
+                return;
+            }
+
+            if (e.key === 'm' || e.key === 'M') {
+                audio.init();
+                const enabled = audio.toggle();
+                hapticVibrate(20);
+                soundBtn.innerText = enabled ? '🔊' : '🔇';
+                return;
+            }
+
+            if (e.key === 'l' || e.key === 'L') {
+                audio.init();
+                if (leaderboardModal && leaderboardModal.style.display === 'flex') {
+                    closeLeaderboard();
+                } else {
+                    openLeaderboard();
                 }
                 return;
             }
@@ -3339,6 +4359,36 @@
                 resumeGame();
             }
         });
+
+        // Toggle Virtual Controls (On-Screen Controller)
+        if (toggleCtrlBtn) {
+            toggleCtrlBtn.addEventListener('click', () => {
+                audio.init();
+                audio.playPop();
+                virtualControlsVisible = !virtualControlsVisible;
+                updateControlsVisibility();
+                hapticVibrate(20);
+            });
+        }
+
+        // Leaderboard Open/Close Buttons
+        if (leaderboardHudBtn) leaderboardHudBtn.addEventListener('click', () => { audio.init(); openLeaderboard(); });
+        if (leaderboardBtnMenu) leaderboardBtnMenu.addEventListener('click', () => { audio.init(); openLeaderboard(); });
+        if (pauseLeaderboardBtn) pauseLeaderboardBtn.addEventListener('click', () => { audio.init(); openLeaderboard(); });
+        if (mobileLbBtn) mobileLbBtn.addEventListener('click', () => { audio.init(); openLeaderboard(); });
+        if (closeLeaderboardBtn) closeLeaderboardBtn.addEventListener('click', closeLeaderboard);
+        if (closeLeaderboardBtnX) closeLeaderboardBtnX.addEventListener('click', closeLeaderboard);
+
+        if (resetLeaderboardBtn) {
+            resetLeaderboardBtn.addEventListener('click', () => {
+                audio.init();
+                if (confirm('Yakin ingin mereset papan peringkat ke data awal?')) {
+                    localStorage.removeItem('space_impact_leaderboard');
+                    renderLeaderboard();
+                    audio.playPop();
+                }
+            });
+        }
 
         // Mobile Console Quick Buttons
         mobilePauseBtn.addEventListener('click', () => {
@@ -3447,6 +4497,26 @@
         dpadWrapper.addEventListener('touchend', resetDpad, { passive: false });
         dpadWrapper.addEventListener('touchcancel', resetDpad, { passive: false });
 
+        // Mouse support for D-Pad
+        const bindDpadMouse = (btn, keyName) => {
+            btn.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                audio.init();
+                keys[keyName] = true;
+                btn.classList.add('active');
+            });
+            const release = (e) => {
+                keys[keyName] = false;
+                btn.classList.remove('active');
+            };
+            btn.addEventListener('mouseup', release);
+            btn.addEventListener('mouseleave', release);
+        };
+        bindDpadMouse(btnUp, 'ArrowUp');
+        bindDpadMouse(btnDown, 'ArrowDown');
+        bindDpadMouse(btnLeft, 'ArrowLeft');
+        bindDpadMouse(btnRight, 'ArrowRight');
+
         // Hold-to-Fire Button (Continuous shooting while thumb is held down)
         btnFire.addEventListener('touchstart', (e) => {
             e.preventDefault();
@@ -3466,9 +4536,25 @@
         btnFire.addEventListener('touchend', releaseFire, { passive: false });
         btnFire.addEventListener('touchcancel', releaseFire, { passive: false });
 
-        // --- DIRECT TOUCH DRAGGING ON CANVAS (Touch-to-Move) ---
+        // Mouse support for Fire button
+        btnFire.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            audio.init();
+            btnFire.classList.add('active');
+            keys.Space = true;
+            if (player) player.shoot(performance.now());
+        });
+        const releaseFireMouse = () => {
+            btnFire.classList.remove('active');
+            keys.Space = false;
+        };
+        btnFire.addEventListener('mouseup', releaseFireMouse);
+        btnFire.addEventListener('mouseleave', releaseFireMouse);
+
+        // --- DIRECT TOUCH DRAGGING ON CANVAS (Touch-to-Move & Continuous Auto-Shoot) ---
         canvas.addEventListener('touchstart', (e) => {
             if (gameState !== 'PLAYING') return;
+            e.preventDefault();
             audio.init();
             const touch = e.touches[0];
             const rect = canvas.getBoundingClientRect();
@@ -3477,12 +4563,14 @@
             if (player) {
                 player.targetTouchX = (touch.clientX - rect.left) * scaleX;
                 player.targetTouchY = (touch.clientY - rect.top) * scaleY;
+                player.isAutoFiringTouch = true;
                 player.shoot(performance.now());
             }
-        }, { passive: true });
+        }, { passive: false });
 
         canvas.addEventListener('touchmove', (e) => {
             if (gameState !== 'PLAYING') return;
+            e.preventDefault();
             const touch = e.touches[0];
             const rect = canvas.getBoundingClientRect();
             const scaleX = canvas.width / rect.width;
@@ -3491,16 +4579,24 @@
                 player.targetTouchX = (touch.clientX - rect.left) * scaleX;
                 player.targetTouchY = (touch.clientY - rect.top) * scaleY;
             }
-        }, { passive: true });
+        }, { passive: false });
 
-        const clearCanvasTouch = () => {
+        const clearCanvasTouch = (e) => {
+            if (e && e.cancelable) e.preventDefault();
             if (player) {
                 player.targetTouchX = null;
                 player.targetTouchY = null;
+                player.isAutoFiringTouch = false;
             }
         };
-        canvas.addEventListener('touchend', clearCanvasTouch, { passive: true });
-        canvas.addEventListener('touchcancel', clearCanvasTouch, { passive: true });
+        canvas.addEventListener('touchend', clearCanvasTouch, { passive: false });
+        canvas.addEventListener('touchcancel', clearCanvasTouch, { passive: false });
+
+        // Window resize & orientation change listeners
+        window.addEventListener('resize', updateControlsVisibility);
+        window.addEventListener('orientationchange', () => {
+            setTimeout(updateControlsVisibility, 150);
+        });
 
         // Initial setup
         updateCoinsDisplay();

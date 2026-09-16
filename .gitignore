@@ -1,0 +1,15 @@
+# Dependency directories
+node_modules/
+
+# Environment variables
+.env*.local
+.env
+
+# Next.js build
+.next/
+out/
+
+# Temporary & Agents
+scratch/
+.agents/
+skills/
