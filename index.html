@@ -2,7 +2,11 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#12092b">
     <title>Space Impact: Cute Alien Adventure & Shop!</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -23,23 +27,35 @@
             box-sizing: border-box;
             user-select: none;
             -webkit-user-select: none;
+            -webkit-touch-callout: none;
         }
 
-        body {
+        html, body {
             margin: 0;
-            padding: 10px;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            min-height: 100dvh;
             background: radial-gradient(circle at 50% 30%, #291254 0%, #110726 70%, #080314 100%);
+            font-family: 'Fredoka', cursive, sans-serif;
+            color: #fff;
+            overflow: hidden;
+            touch-action: manipulation;
+        }
+
+        #app-container {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            font-family: 'Fredoka', cursive, sans-serif;
-            color: #fff;
-            overflow: hidden;
-            touch-action: none;
+            width: 100%;
+            height: 100%;
+            min-height: 100dvh;
+            padding: 8px;
+            box-sizing: border-box;
         }
 
+        /* --- SCREEN CONTAINER --- */
         #game-frame {
             position: relative;
             width: 95vw;
@@ -53,6 +69,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            flex-shrink: 0;
         }
 
         #game-canvas {
@@ -60,8 +77,10 @@
             width: 100%;
             height: 100%;
             background-color: #0b071e;
+            touch-action: none;
         }
 
+        /* --- HUD LAYER --- */
         #ui-layer {
             position: absolute;
             top: 0;
@@ -72,7 +91,8 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            padding: 14px 18px;
+            padding: 12px 14px;
+            box-sizing: border-box;
         }
 
         .hud-top {
@@ -80,23 +100,25 @@
             justify-content: space-between;
             align-items: center;
             width: 100%;
-            gap: 8px;
+            gap: 6px;
+            flex-wrap: nowrap;
         }
 
         .hud-badge {
             background: rgba(25, 14, 55, 0.85);
             border: 3px solid #ffd200;
             border-radius: 50px;
-            padding: 6px 14px;
+            padding: 5px 12px;
             font-family: 'Lilita One', cursive;
-            font-size: 18px;
+            font-size: 17px;
             letter-spacing: 0.5px;
             color: #ffd200;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.6);
             display: flex;
             align-items: center;
-            gap: 6px;
+            gap: 5px;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            white-space: nowrap;
         }
 
         .hud-badge.coins-badge {
@@ -112,29 +134,32 @@
         .hud-badge.lives-badge {
             border-color: #ff4081;
             color: #ff4081;
-            font-size: 20px;
+            font-size: 19px;
+            letter-spacing: 1px;
         }
 
         .hud-btn-group {
             display: flex;
-            gap: 6px;
+            gap: 5px;
             pointer-events: auto;
+            flex-shrink: 0;
         }
 
         .hud-btn {
             background: rgba(25, 14, 55, 0.85);
             border: 3px solid #ff77a9;
             border-radius: 50%;
-            width: 40px;
-            height: 40px;
+            width: 38px;
+            height: 38px;
             display: flex;
             align-items: center;
             justify-content: center;
             cursor: pointer;
-            font-size: 18px;
+            font-size: 17px;
             color: #fff;
             transition: transform 0.15s, background 0.15s;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+            outline: none;
         }
 
         .hud-btn:hover {
@@ -143,7 +168,7 @@
         }
 
         .hud-btn:active {
-            transform: scale(0.95);
+            transform: scale(0.92);
         }
 
         .hud-btn.menu-btn {
@@ -153,10 +178,14 @@
             background: #00b0ff;
         }
 
+        .hud-btn.fullscreen-btn {
+            border-color: #ffd200;
+        }
+
         /* Boss Bar */
         #boss-hud {
             position: absolute;
-            top: 60px;
+            top: 55px;
             left: 50%;
             transform: translateX(-50%);
             display: none;
@@ -167,21 +196,21 @@
             background: rgba(20, 10, 45, 0.9);
             border: 3px solid #ff4081;
             border-radius: 20px;
-            padding: 8px 16px;
+            padding: 6px 14px;
             box-shadow: 0 8px 20px rgba(255, 64, 129, 0.4);
         }
 
         #boss-name-text {
             font-family: 'Lilita One', cursive;
-            font-size: 18px;
+            font-size: 17px;
             color: #ffd200;
             text-shadow: 0 2px 4px #000;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         #boss-hp-bar {
             width: 100%;
-            height: 16px;
+            height: 14px;
             background: rgba(255, 255, 255, 0.2);
             border-radius: 12px;
             border: 2px solid #fff;
@@ -198,7 +227,7 @@
             box-shadow: 0 0 10px #ff4081;
         }
 
-        /* Modals & Overlays */
+        /* --- MODALS & OVERLAYS --- */
         #message-overlay, #pause-modal {
             position: absolute;
             top: 50%;
@@ -207,7 +236,7 @@
             text-align: center;
             color: #2c115c;
             background: linear-gradient(135deg, #ffffff 0%, #f0f4ff 100%);
-            padding: 22px 28px;
+            padding: 20px 24px;
             border-radius: 28px;
             border: 6px solid #ffd200;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 0 6px #ff4081;
@@ -215,17 +244,19 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 12px;
-            max-width: 90%;
-            width: 440px;
-            animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            gap: 10px;
+            max-width: 92%;
+            width: 420px;
+            max-height: 90%;
+            overflow-y: auto;
+            animation: popIn 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             z-index: 20;
         }
 
         #pause-modal {
             border-color: #00e5ff;
             box-shadow: 0 15px 40px rgba(0, 0, 0, 0.6), 0 0 0 6px #7c4dff;
-            width: 380px;
+            width: 360px;
             display: none;
             z-index: 25;
         }
@@ -238,17 +269,17 @@
         #message-overlay h1, #pause-modal h1 {
             margin: 0;
             font-family: 'Lilita One', cursive;
-            font-size: 38px;
+            font-size: 34px;
             background: linear-gradient(45deg, #ff4081, #7c4dff, #00e5ff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.15));
-            letter-spacing: 1px;
+            letter-spacing: 0.5px;
         }
 
         #message-overlay p, #pause-modal p {
             margin: 0;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 600;
             color: #55338a;
         }
@@ -258,26 +289,26 @@
             justify-content: space-around;
             width: 100%;
             background: #ede6fc;
-            padding: 10px 12px;
+            padding: 8px 12px;
             border-radius: 18px;
-            font-size: 15px;
+            font-size: 14px;
             font-weight: 700;
             color: #55338a;
             border: 2px solid #d1c4e9;
         }
 
         .btn-group-label {
-            font-size: 13px;
+            font-size: 12px;
             font-weight: 700;
             color: #8c64bb;
             text-transform: uppercase;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
             letter-spacing: 0.5px;
         }
 
         .btn-row {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             justify-content: center;
             width: 100%;
         }
@@ -287,9 +318,9 @@
             color: #55338a;
             border: 2px solid #c7b3f5;
             border-radius: 16px;
-            padding: 8px 14px;
+            padding: 7px 12px;
             font-family: 'Fredoka', cursive;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 700;
             cursor: pointer;
             transition: all 0.2s;
@@ -314,27 +345,27 @@
             color: #fff;
             border: 3px solid #b9f6ca;
             border-radius: 50px;
-            padding: 12px 30px;
+            padding: 11px 26px;
             font-family: 'Lilita One', cursive;
-            font-size: 24px;
+            font-size: 22px;
             cursor: pointer;
-            box-shadow: 0 6px 0 #008736, 0 10px 20px rgba(0, 230, 118, 0.4);
+            box-shadow: 0 5px 0 #008736, 0 8px 18px rgba(0, 230, 118, 0.4);
             transition: all 0.15s;
             text-shadow: 0 2px 3px rgba(0,0,0,0.3);
             margin-top: 4px;
-            width: 80%;
+            width: 82%;
             outline: none;
         }
 
         .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 9px 0 #008736, 0 14px 25px rgba(0, 230, 118, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 7px 0 #008736, 0 12px 22px rgba(0, 230, 118, 0.5);
             background: linear-gradient(180deg, #24f18b 0%, #00c853 100%);
         }
 
         .btn-primary:active {
             transform: translateY(3px);
-            box-shadow: 0 3px 0 #008736, 0 4px 10px rgba(0, 230, 118, 0.3);
+            box-shadow: 0 2px 0 #008736;
         }
 
         .btn-shop {
@@ -342,13 +373,13 @@
             color: #3e1b00;
             border: 3px solid #fff59d;
             border-radius: 50px;
-            padding: 10px 24px;
+            padding: 9px 20px;
             font-family: 'Lilita One', cursive;
-            font-size: 20px;
+            font-size: 19px;
             cursor: pointer;
             box-shadow: 0 5px 0 #c47100, 0 8px 16px rgba(255, 179, 0, 0.4);
             transition: all 0.15s;
-            width: 80%;
+            width: 82%;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -372,9 +403,9 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 90%;
+            width: 92%;
             max-width: 580px;
-            max-height: 88%;
+            max-height: 86dvh;
             background: linear-gradient(135deg, #2a1656 0%, #15092e 100%);
             border: 6px solid #ffd200;
             border-radius: 28px;
@@ -382,7 +413,7 @@
             z-index: 30;
             display: none;
             flex-direction: column;
-            padding: 18px 22px;
+            padding: 16px 18px;
             box-sizing: border-box;
             color: #fff;
             animation: popIn 0.25s ease-out;
@@ -393,37 +424,37 @@
             justify-content: space-between;
             align-items: center;
             border-bottom: 3px dashed rgba(255, 255, 255, 0.2);
-            padding-bottom: 12px;
-            margin-bottom: 14px;
+            padding-bottom: 10px;
+            margin-bottom: 12px;
         }
 
         .shop-title {
             font-family: 'Lilita One', cursive;
-            font-size: 26px;
+            font-size: 22px;
             color: #ffd200;
             text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
         }
 
         .shop-coins-display {
             background: rgba(0, 0, 0, 0.5);
             border: 2px solid #ffd200;
             border-radius: 30px;
-            padding: 5px 16px;
+            padding: 4px 14px;
             font-family: 'Lilita One', cursive;
-            font-size: 18px;
+            font-size: 16px;
             color: #ffd200;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 6px;
             box-shadow: 0 4px 12px rgba(255, 210, 0, 0.3);
         }
 
         .coin-icon-bounce {
             display: inline-block;
-            font-size: 20px;
+            font-size: 18px;
             animation: coinBounce 1.5s ease-in-out infinite;
             filter: drop-shadow(0 2px 4px rgba(255, 210, 0, 0.5));
         }
@@ -440,9 +471,9 @@
             gap: 5px;
             font-family: 'Lilita One', cursive;
             font-size: 13px;
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 14px;
-            margin-bottom: 6px;
+            margin-bottom: 5px;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
         }
 
@@ -466,12 +497,13 @@
 
         .shop-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 12px;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
             overflow-y: auto;
             padding-right: 4px;
-            margin-bottom: 14px;
-            max-height: 380px;
+            margin-bottom: 12px;
+            max-height: 360px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .shop-grid::-webkit-scrollbar {
@@ -486,7 +518,7 @@
             background: rgba(255, 255, 255, 0.08);
             border: 3px solid rgba(255, 255, 255, 0.2);
             border-radius: 20px;
-            padding: 12px;
+            padding: 10px;
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -503,41 +535,41 @@
 
         .ship-preview-box {
             width: 76px;
-            height: 52px;
+            height: 50px;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
         }
 
         .ship-name {
             font-family: 'Lilita One', cursive;
-            font-size: 16px;
+            font-size: 15px;
             color: #fff;
-            margin-bottom: 3px;
+            margin-bottom: 2px;
         }
 
         .ship-pilot {
             font-size: 12px;
             color: #b388ff;
             font-weight: 600;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
         }
 
         .ship-desc {
             font-size: 11px;
             color: #e0e0e0;
             line-height: 1.2;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             flex-grow: 1;
         }
 
         .ship-btn {
             width: 100%;
-            padding: 8px 12px;
+            padding: 8px 10px;
             border-radius: 20px;
             font-family: 'Lilita One', cursive;
-            font-size: 14px;
+            font-size: 13px;
             cursor: pointer;
             outline: none;
             transition: transform 0.15s;
@@ -577,9 +609,9 @@
             color: #55338a;
             border: 3px solid #c7b3f5;
             border-radius: 30px;
-            padding: 8px 28px;
+            padding: 8px 24px;
             font-family: 'Lilita One', cursive;
-            font-size: 18px;
+            font-size: 17px;
             cursor: pointer;
             transition: all 0.15s;
         }
@@ -589,63 +621,145 @@
             transform: translateY(-2px);
         }
 
-        /* Mobile Controls */
+        /* --- ANDROID HANDHELD CONSOLE CONTROLLER STYLES --- */
         #mobile-controls {
             display: none;
             width: 95vw;
             max-width: 800px;
-            margin-top: 15px;
+            margin-top: 10px;
+            background: linear-gradient(180deg, #2a1656 0%, #15092e 100%);
+            border: 4px solid #7c4dff;
+            border-radius: 24px;
+            padding: 12px 18px;
+            box-sizing: border-box;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.6), inset 0 2px 6px rgba(255, 255, 255, 0.15);
             justify-content: space-between;
             align-items: center;
-            padding: 0 10px;
+            gap: 12px;
+            position: relative;
         }
 
-        @media (max-width: 850px) {
-            #mobile-controls {
-                display: flex;
-            }
+        /* Console Decorative Center */
+        .console-center {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .console-brand {
+            font-family: 'Lilita One', cursive;
+            font-size: 13px;
+            color: #b388ff;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .speaker-grille {
+            display: flex;
+            gap: 4px;
+        }
+        .speaker-dot {
+            width: 5px;
+            height: 5px;
+            background: #0f0524;
+            border-radius: 50%;
+            box-shadow: inset 0 1px 1px rgba(0,0,0,0.8);
+        }
+
+        .console-quick-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #b388ff;
+            border-radius: 14px;
+            color: #fff;
+            padding: 4px 10px;
+            font-family: 'Lilita One', cursive;
+            font-size: 12px;
+            cursor: pointer;
+            outline: none;
+        }
+        .console-quick-btn:active {
+            transform: scale(0.95);
+            background: #7c4dff;
+        }
+
+        /* Ergonomic Virtual D-Pad with central thumb-glide */
+        .dpad-wrapper {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            touch-action: none;
         }
 
         .d-pad {
             display: grid;
-            grid-template-columns: repeat(3, 56px);
-            grid-template-rows: repeat(3, 56px);
-            gap: 6px;
+            grid-template-columns: repeat(3, 44px);
+            grid-template-rows: repeat(3, 44px);
+            gap: 4px;
+            width: 140px;
+            height: 140px;
+            background: #190a36;
+            border-radius: 50%;
+            padding: 4px;
+            box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.6), 0 4px 12px rgba(124, 77, 255, 0.2);
+            border: 3px solid #512da8;
         }
 
         .d-btn {
             background: linear-gradient(135deg, #6c40cc, #4527a0);
-            border: 3px solid #b388ff;
-            border-radius: 18px;
+            border: 2px solid #b388ff;
+            border-radius: 12px;
             color: #fff;
-            font-size: 22px;
+            font-size: 19px;
             display: flex;
             justify-content: center;
             align-items: center;
             user-select: none;
-            box-shadow: 0 5px 0 #281468, 0 8px 15px rgba(0,0,0,0.4);
+            box-shadow: 0 4px 0 #281468, 0 6px 10px rgba(0,0,0,0.4);
             cursor: pointer;
-            transition: transform 0.1s;
+            transition: transform 0.1s, background 0.1s;
         }
 
-        .d-btn:active {
-            transform: translateY(4px);
+        .d-btn.active, .d-btn:active {
+            transform: translateY(3px);
             box-shadow: 0 1px 0 #281468;
+            background: linear-gradient(135deg, #00e5ff, #0091ea);
+            color: #000;
         }
 
-        #btn-up { grid-column: 2; grid-row: 1; }
-        #btn-left { grid-column: 1; grid-row: 2; }
-        #btn-right { grid-column: 3; grid-row: 2; }
-        #btn-down { grid-column: 2; grid-row: 3; }
+        #btn-up { grid-column: 2; grid-row: 1; border-radius: 14px 14px 4px 4px; }
+        #btn-left { grid-column: 1; grid-row: 2; border-radius: 14px 4px 4px 14px; }
+        .dpad-center {
+            grid-column: 2;
+            grid-row: 2;
+            background: #210d47;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #512da8;
+        }
+        .dpad-center-nub {
+            width: 14px;
+            height: 14px;
+            background: #b388ff;
+            border-radius: 50%;
+            box-shadow: inset 0 2px 4px rgba(255, 255, 255, 0.6);
+        }
+        #btn-right { grid-column: 3; grid-row: 2; border-radius: 4px 14px 14px 4px; }
+        #btn-down { grid-column: 2; grid-row: 3; border-radius: 4px 4px 14px 14px; }
 
+        /* Action Buttons Area */
         .action-btns {
             display: flex;
-            gap: 15px;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
         }
 
         .action-btn {
-            width: 82px;
-            height: 82px;
+            width: 84px;
+            height: 84px;
             background: linear-gradient(180deg, #ff4081 0%, #d81b60 100%);
             border: 4px solid #ff80ab;
             border-radius: 50%;
@@ -661,29 +775,40 @@
             cursor: pointer;
             box-shadow: 0 6px 0 #880e4f, 0 10px 20px rgba(255, 64, 129, 0.5);
             transition: transform 0.1s;
+            touch-action: none;
         }
 
-        .action-btn:active {
+        .action-btn.active, .action-btn:active {
             transform: translateY(4px);
             box-shadow: 0 2px 0 #880e4f;
+            background: linear-gradient(180deg, #ff80ab 0%, #c2185b 100%);
+        }
+
+        .hold-hint {
+            font-size: 10px;
+            font-family: 'Fredoka', cursive;
+            color: #ffd200;
+            font-weight: bold;
+            margin-top: -2px;
         }
 
         #powerup-notice {
             position: absolute;
-            top: 75px;
+            top: 65px;
             left: 50%;
             transform: translateX(-50%);
             background: linear-gradient(90deg, #ffd200, #ff9100);
             color: #3e1b00;
             font-family: 'Lilita One', cursive;
-            font-size: 18px;
-            padding: 6px 20px;
+            font-size: 16px;
+            padding: 5px 18px;
             border-radius: 30px;
             border: 3px solid #fff;
             box-shadow: 0 6px 20px rgba(255, 210, 0, 0.6);
             display: none;
             z-index: 15;
             animation: bounceIn 0.3s ease-out;
+            white-space: nowrap;
         }
 
         @keyframes bounceIn {
@@ -691,112 +816,245 @@
             50% { transform: translate(-50%, 0) scale(1.1); }
             100% { transform: translate(-50%, 0) scale(1); opacity: 1; }
         }
+
+        /* --- MEDIA QUERIES FOR ANDROID MOBILE (PORTRAIT & LANDSCAPE) --- */
+        @media (max-width: 850px) {
+            #mobile-controls {
+                display: flex;
+            }
+        }
+
+        /* Android Small Screen (Portrait < 500px) */
+        @media (max-width: 500px) {
+            #app-container {
+                padding: 4px;
+                justify-content: flex-start;
+            }
+            #game-frame {
+                width: 100%;
+                border-width: 5px;
+                border-radius: 20px;
+                box-shadow: 0 6px 20px rgba(255, 64, 129, 0.3), 0 0 0 4px #7c4dff;
+            }
+            .hud-badge {
+                font-size: 14px;
+                padding: 3px 8px;
+                border-width: 2px;
+            }
+            .hud-btn {
+                width: 34px;
+                height: 34px;
+                font-size: 15px;
+                border-width: 2px;
+            }
+            #mobile-controls {
+                width: 100%;
+                padding: 10px 14px;
+                border-radius: 20px;
+                margin-top: 8px;
+            }
+            .dpad-wrapper, .d-pad {
+                width: 125px;
+                height: 125px;
+            }
+            .d-pad {
+                grid-template-columns: repeat(3, 38px);
+                grid-template-rows: repeat(3, 38px);
+            }
+            .action-btn {
+                width: 76px;
+                height: 76px;
+                font-size: 20px;
+            }
+        }
+
+        /* Android Landscape Mode (Horizontal Fullscreen Handheld) */
+        @media (max-width: 950px) and (orientation: landscape) {
+            #app-container {
+                padding: 0;
+                flex-direction: row;
+                justify-content: center;
+                align-items: center;
+            }
+            #game-frame {
+                height: 100dvh;
+                width: auto;
+                max-width: none;
+                aspect-ratio: 4/3;
+                border: none;
+                border-radius: 0;
+                box-shadow: none;
+            }
+            #mobile-controls {
+                display: flex;
+                position: absolute;
+                bottom: 10px;
+                left: 0;
+                width: 100%;
+                max-width: none;
+                background: transparent;
+                border: none;
+                box-shadow: none;
+                padding: 0 25px;
+                pointer-events: none;
+                z-index: 18;
+            }
+            .dpad-wrapper {
+                pointer-events: auto;
+                background: rgba(25, 10, 54, 0.45);
+                border-radius: 50%;
+                backdrop-filter: blur(4px);
+            }
+            .console-center {
+                display: none;
+            }
+            .action-btns {
+                pointer-events: auto;
+            }
+            .action-btn {
+                background: linear-gradient(180deg, rgba(255, 64, 129, 0.75) 0%, rgba(216, 27, 96, 0.75) 100%);
+                backdrop-filter: blur(4px);
+            }
+        }
     </style>
 </head>
 <body>
 
-    <div id="game-frame">
-        <canvas id="game-canvas" width="800" height="600"></canvas>
-        
-        <div id="powerup-notice">TRIPLE SHOT ACTIVATED! ⭐</div>
-
-        <div id="ui-layer">
-            <div class="hud-top">
-                <div class="hud-badge" id="score-display">⭐ 0000</div>
-                <div class="hud-badge coins-badge" id="coins-display">🪙 0</div>
-                <div class="hud-badge level-badge" id="level-display">🚀 LVL 1</div>
-                <div class="hud-badge lives-badge" id="lives-display">💖💖💖</div>
-                <div class="hud-btn-group">
-                    <button class="hud-btn" id="sound-btn" title="Toggle Sound">🔊</button>
-                    <button class="hud-btn menu-btn" id="in-game-menu-btn" title="Menu / Jeda">⏸️</button>
-                </div>
-            </div>
-
-            <div id="boss-hud">
-                <span id="boss-name-text">👾 BOSS HP: 50 / 50</span>
-                <div id="boss-hp-bar"><div id="boss-hp-fill"></div></div>
-            </div>
-            <div></div>
-        </div>
-
-        <!-- MAIN MENU OVERLAY -->
-        <div id="message-overlay">
-            <h1>CUTE SPACE ATTACK!</h1>
-            <p>Petualangan Luar Angkasa Kartun yang Seru!</p>
+    <div id="app-container">
+        <!-- GAME FRAME (CANVAS & HUD) -->
+        <div id="game-frame">
+            <canvas id="game-canvas" width="800" height="600"></canvas>
             
-            <div style="width: 100%;">
-                <div class="btn-group-label">PILIH TINGKAT KESULITAN:</div>
-                <div class="btn-row">
-                    <button class="btn-chip diff-btn" data-diff="easy">🌟 SANTAI</button>
-                    <button class="btn-chip diff-btn selected" data-diff="normal">⚡ NORMAL</button>
-                    <button class="btn-chip diff-btn" data-diff="hard">🔥 TANTANGAN</button>
+            <div id="powerup-notice">TRIPLE SHOT ACTIVATED! ⭐</div>
+
+            <div id="ui-layer">
+                <div class="hud-top">
+                    <div class="hud-badge" id="score-display">⭐ 0000</div>
+                    <div class="hud-badge coins-badge" id="coins-display">🪙 0</div>
+                    <div class="hud-badge level-badge" id="level-display">🚀 LVL 1</div>
+                    <div class="hud-badge lives-badge" id="lives-display">💖💖💖</div>
+                    <div class="hud-btn-group">
+                        <button class="hud-btn" id="sound-btn" title="Suara On/Off">🔊</button>
+                        <button class="hud-btn menu-btn" id="in-game-menu-btn" title="Menu / Jeda">⏸️</button>
+                        <button class="hud-btn fullscreen-btn" id="fullscreen-btn" title="Layar Penuh (Fullscreen)">⛶</button>
+                    </div>
+                </div>
+
+                <div id="boss-hud">
+                    <span id="boss-name-text">👾 BOSS HP: 50 / 50</span>
+                    <div id="boss-hp-bar"><div id="boss-hp-fill"></div></div>
+                </div>
+                <div></div>
+            </div>
+
+            <!-- MAIN MENU OVERLAY -->
+            <div id="message-overlay">
+                <h1>CUTE SPACE ATTACK!</h1>
+                <p>Petualangan Luar Angkasa Kartun yang Seru!</p>
+                
+                <div style="width: 100%;">
+                    <div class="btn-group-label">PILIH TINGKAT KESULITAN:</div>
+                    <div class="btn-row">
+                        <button class="btn-chip diff-btn" data-diff="easy">🌟 SANTAI</button>
+                        <button class="btn-chip diff-btn selected" data-diff="normal">⚡ NORMAL</button>
+                        <button class="btn-chip diff-btn" data-diff="hard">🔥 TANTANGAN</button>
+                    </div>
+                </div>
+
+                <div style="width: 100%;">
+                    <div class="btn-group-label">MODE TEMAN TERBANG:</div>
+                    <div class="btn-row">
+                        <button class="btn-chip mode-btn selected" data-mode="solo">🚀 SOLO</button>
+                        <button class="btn-chip mode-btn" data-mode="wingman">🤖 + PET DRONE</button>
+                    </div>
+                </div>
+
+                <button id="shop-btn-menu" class="btn-shop">🛒 TOKO PESAWAT (<span id="menu-coin-count">🪙 0</span>)</button>
+
+                <button id="start-btn" class="btn-primary">MAIN SEKARANG! 🚀</button>
+            </div>
+
+            <!-- IN-GAME PAUSE / MENU MODAL -->
+            <div id="pause-modal">
+                <h1>⏸️ MENU PERMAINAN</h1>
+                <p>Antariksa sedang beristirahat sejenak!</p>
+                
+                <div class="pause-stat-box">
+                    <div>⭐ SKOR: <b id="pause-score-val">0</b></div>
+                    <div>🚀 LVL: <b id="pause-level-val">1</b></div>
+                    <div>🪙 KOIN: <b id="pause-coins-val">0</b></div>
+                </div>
+
+                <button id="resume-btn" class="btn-primary" style="width: 100%; font-size: 22px;">LANJUT TERBANG 🚀</button>
+                <button id="pause-shop-btn" class="btn-shop" style="width: 100%; font-size: 18px;">🛒 TOKO PESAWAT</button>
+                <button id="restart-game-btn" class="btn-chip" style="width: 100%; padding: 10px; font-size: 15px; background: #ede6fc; border-color: #b388ff; color: #512da8;">🔄 ULANG DARI AWAL</button>
+                <button id="quit-to-menu-btn" class="btn-chip" style="width: 100%; padding: 10px; font-size: 15px; background: #ffebee; border-color: #ff80ab; color: #c2185b;">🏠 KEMBALI KE MENU UTAMA</button>
+            </div>
+
+            <!-- SHOP / HANGAR MODAL -->
+            <div id="shop-modal">
+                <div class="shop-header">
+                    <div class="shop-title">🚀 TOKO PESAWAT <span class="coin-icon-bounce">🪙</span></div>
+                    <div class="shop-coins-display" id="shop-coins-display"><span class="coin-icon-bounce">🪙</span> 0 KOIN</div>
+                </div>
+
+                <div class="shop-grid" id="shop-grid">
+                    <!-- Ship cards dynamically rendered -->
+                </div>
+
+                <div class="shop-footer">
+                    <button id="close-shop-btn" class="btn-close-shop">KEMBALI ✖</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ANDROID HANDHELD CONTROLS -->
+        <div id="mobile-controls">
+            <!-- Left: Ergonomic D-Pad with Slide Navigation -->
+            <div class="dpad-wrapper" id="dpad-wrapper">
+                <div class="d-pad">
+                    <div id="btn-up" class="d-btn">▲</div>
+                    <div id="btn-left" class="d-btn">◄</div>
+                    <div class="dpad-center"><div class="dpad-center-nub"></div></div>
+                    <div id="btn-right" class="d-btn">►</div>
+                    <div id="btn-down" class="d-btn">▼</div>
                 </div>
             </div>
 
-            <div style="width: 100%;">
-                <div class="btn-group-label">MODE TEMAN TERBANG:</div>
-                <div class="btn-row">
-                    <button class="btn-chip mode-btn selected" data-mode="solo">🚀 SOLO</button>
-                    <button class="btn-chip mode-btn" data-mode="wingman">🤖 + PET DRONE</button>
+            <!-- Center: Android Console Accents -->
+            <div class="console-center">
+                <div class="console-brand">SPACE DROID 🎮</div>
+                <div class="speaker-grille">
+                    <div class="speaker-dot"></div><div class="speaker-dot"></div><div class="speaker-dot"></div>
+                    <div class="speaker-dot"></div><div class="speaker-dot"></div><div class="speaker-dot"></div>
+                </div>
+                <div style="display: flex; gap: 6px; margin-top: 4px;">
+                    <button id="mobile-pause-btn" class="console-quick-btn">⏸️ JEDA</button>
+                    <button id="mobile-shop-btn" class="console-quick-btn">🛒 TOKO</button>
                 </div>
             </div>
 
-            <button id="shop-btn-menu" class="btn-shop">🛒 TOKO PESAWAT (<span id="menu-coin-count">🪙 0</span>)</button>
-
-            <button id="start-btn" class="btn-primary">MAIN SEKARANG! 🚀</button>
-        </div>
-
-        <!-- IN-GAME PAUSE / MENU MODAL -->
-        <div id="pause-modal">
-            <h1>⏸️ MENU PERMAINAN</h1>
-            <p>Antariksa sedang beristirahat sejenak!</p>
-            
-            <div class="pause-stat-box">
-                <div>⭐ SKOR: <b id="pause-score-val">0</b></div>
-                <div>🚀 LVL: <b id="pause-level-val">1</b></div>
-                <div>🪙 KOIN: <b id="pause-coins-val">0</b></div>
-            </div>
-
-            <button id="resume-btn" class="btn-primary" style="width: 100%; font-size: 22px;">LANJUT TERBANG 🚀</button>
-            <button id="pause-shop-btn" class="btn-shop" style="width: 100%; font-size: 18px;">🛒 TOKO PESAWAT</button>
-            <button id="restart-game-btn" class="btn-chip" style="width: 100%; padding: 10px; font-size: 15px; background: #ede6fc; border-color: #b388ff; color: #512da8;">🔄 ULANG DARI AWAL</button>
-            <button id="quit-to-menu-btn" class="btn-chip" style="width: 100%; padding: 10px; font-size: 15px; background: #ffebee; border-color: #ff80ab; color: #c2185b;">🏠 KEMBALI KE MENU UTAMA</button>
-        </div>
-
-        <!-- SHOP / HANGAR MODAL -->
-        <div id="shop-modal">
-            <div class="shop-header">
-                <div class="shop-title">🚀 TOKO PESAWAT <span class="coin-icon-bounce">🪙</span></div>
-                <div class="shop-coins-display" id="shop-coins-display"><span class="coin-icon-bounce">🪙</span> 0 KOIN</div>
-            </div>
-
-            <div class="shop-grid" id="shop-grid">
-                <!-- Ship cards dynamically rendered -->
-            </div>
-
-            <div class="shop-footer">
-                <button id="close-shop-btn" class="btn-close-shop">KEMBALI ✖</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Mobile Controls -->
-    <div id="mobile-controls">
-        <div class="d-pad">
-            <div id="btn-up" class="d-btn">▲</div>
-            <div id="btn-left" class="d-btn">◄</div>
-            <div id="btn-right" class="d-btn">►</div>
-            <div id="btn-down" class="d-btn">▼</div>
-        </div>
-        <div class="action-btns">
-            <div id="btn-fire" class="action-btn">
-                <span>PEW!</span>
-                <span style="font-size: 13px;">🚀</span>
+            <!-- Right: Big Candy Fire Button (Hold to Fire) -->
+            <div class="action-btns">
+                <div id="btn-fire" class="action-btn">
+                    <span>PEW!</span>
+                    <span style="font-size: 13px;">🚀</span>
+                </div>
+                <span class="hold-hint">TAHAN UTK AUTO-FIRE</span>
             </div>
         </div>
     </div>
 
     <script>
+        // --- HAPTIC VIBRATION (Android Native Feel) ---
+        function hapticVibrate(pattern) {
+            if ('vibrate' in navigator && navigator.vibrate) {
+                try {
+                    navigator.vibrate(pattern);
+                } catch(e) {}
+            }
+        }
+
         // --- SOUND EFFECTS (Web Audio API Synthesizer) ---
         class CartoonAudio {
             constructor() {
@@ -1008,7 +1266,7 @@
         let totalCoins = parseInt(localStorage.getItem('space_impact_coins')) || 0;
         let unlockedShips = JSON.parse(localStorage.getItem('space_impact_unlocked_ships')) || ['cat'];
         let selectedShip = localStorage.getItem('space_impact_selected_ship') || 'cat';
-        let openedShopFrom = 'menu'; // 'menu', 'pause', 'gameover'
+        let openedShopFrom = 'menu';
 
         function saveGameData() {
             localStorage.setItem('space_impact_coins', totalCoins.toString());
@@ -1021,6 +1279,7 @@
             totalCoins += amount;
             saveGameData();
             audio.playCoin();
+            hapticVibrate(15);
         }
 
         function updateCoinsDisplay() {
@@ -1045,6 +1304,10 @@
         const startBtn = document.getElementById('start-btn');
         const soundBtn = document.getElementById('sound-btn');
         const inGameMenuBtn = document.getElementById('in-game-menu-btn');
+        const fullscreenBtn = document.getElementById('fullscreen-btn');
+
+        const mobilePauseBtn = document.getElementById('mobile-pause-btn');
+        const mobileShopBtn = document.getElementById('mobile-shop-btn');
 
         const resumeBtn = document.getElementById('resume-btn');
         const pauseShopBtn = document.getElementById('pause-shop-btn');
@@ -1072,7 +1335,7 @@
         let currentGameMode = 'solo';
 
         // Game State
-        let gameState = 'START'; // START, PLAYING, PAUSED, GAME_OVER
+        let gameState = 'START';
         let score = 0;
         let lives = 3;
         let level = 1;
@@ -1095,6 +1358,28 @@
             w: false, s: false, a: false, d: false,
             Space: false
         };
+
+        // --- FULLSCREEN CONTROLLER ---
+        function toggleFullscreen() {
+            hapticVibrate(20);
+            if (!document.fullscreenElement && !document.webkitFullscreenElement) {
+                const el = document.documentElement;
+                if (el.requestFullscreen) {
+                    el.requestFullscreen().catch(() => {});
+                } else if (el.webkitRequestFullscreen) {
+                    el.webkitRequestFullscreen();
+                }
+                fullscreenBtn.innerText = '🗗';
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().catch(() => {});
+                } else if (document.webkitExitFullscreen) {
+                    document.webkitExitFullscreen();
+                }
+                fullscreenBtn.innerText = '⛶';
+            }
+        }
+        fullscreenBtn.addEventListener('click', toggleFullscreen);
 
         // --- BACKGROUND GRAPHICS ---
         class CartoonBackground {
@@ -1367,12 +1652,10 @@
                 ctx.beginPath(); ctx.ellipse(6, -4, 3, 5, 0.3, 0, Math.PI * 2); ctx.fill();
                 ctx.fillStyle = '#d7ccc8';
                 ctx.beginPath(); ctx.arc(-1, -2, 6.5, 0, Math.PI * 2); ctx.fill();
-
                 ctx.fillStyle = '#455a64';
                 ctx.fillRect(-6, -7, 10, 3);
                 ctx.fillStyle = '#80d8ff';
                 ctx.beginPath(); ctx.arc(-3, -5.5, 2, 0, Math.PI * 2); ctx.arc(1, -5.5, 2, 0, Math.PI * 2); ctx.fill();
-
                 ctx.fillStyle = '#212121';
                 if (!isBlinking) {
                     ctx.beginPath(); ctx.arc(-3, -1.5, 1.2, 0, Math.PI * 2); ctx.arc(1, -1.5, 1.2, 0, Math.PI * 2); ctx.fill();
@@ -1503,16 +1786,27 @@
                 this.blinkTimer = 0;
                 this.isBlinking = false;
                 this.shipId = selectedShip || 'cat';
+                this.targetTouchY = null;
+                this.targetTouchX = null;
             }
 
             update(dt) {
                 let dx = 0;
                 let dy = 0;
 
-                if (keys.ArrowLeft || keys.a) dx -= 1;
-                if (keys.ArrowRight || keys.d) dx += 1;
-                if (keys.ArrowUp || keys.w) dy -= 1;
-                if (keys.ArrowDown || keys.s) dy += 1;
+                // Direct Touch Dragging on canvas support
+                if (this.targetTouchY !== null && this.targetTouchX !== null) {
+                    const diffY = this.targetTouchY - (this.y + this.height / 2);
+                    const diffX = this.targetTouchX - (this.x + this.width / 2);
+                    if (Math.abs(diffY) > 8) dy = Math.sign(diffY);
+                    if (Math.abs(diffX) > 8) dx = Math.sign(diffX);
+                }
+
+                // D-Pad / Keyboard inputs
+                if (keys.ArrowLeft || keys.a) dx = -1;
+                if (keys.ArrowRight || keys.d) dx = 1;
+                if (keys.ArrowUp || keys.w) dy = -1;
+                if (keys.ArrowDown || keys.s) dy = 1;
 
                 if (keys.Space) {
                     this.shoot(performance.now());
@@ -2531,6 +2825,7 @@
             if (newLevel > level) {
                 level = newLevel;
                 audio.playPowerup();
+                hapticVibrate([30, 40, 30]);
                 floatingTexts.push(new FloatingText(canvas.width / 2, canvas.height / 2, `LEVEL ${level}! 🚀`, '#00e5ff'));
                 
                 if ((level === 5 || level === 10) && boss === null) {
@@ -2544,6 +2839,7 @@
         function gameOver() {
             gameState = 'GAME_OVER';
             audio.playHurt();
+            hapticVibrate([80, 60, 80]);
             bossHud.style.display = 'none';
             hideNotice();
             saveGameData();
@@ -2569,6 +2865,7 @@
             if (player.hasShield) {
                 player.hasShield = false;
                 audio.playPop();
+                hapticVibrate(40);
                 floatingTexts.push(new FloatingText(player.x, player.y, 'SHIELD SAVED! 🛡️', '#00e5ff'));
                 createCartoonParticles(player.x + player.width / 2, player.y + player.height / 2, 12, 'spark');
                 player.invulnerableTime = 1200;
@@ -2578,6 +2875,7 @@
             lives--;
             updateHUD();
             audio.playHurt();
+            hapticVibrate([60, 50, 60]);
             triggerScreenShake(0.3, 10);
             createCartoonParticles(player.x + player.width / 2, player.y + player.height / 2, 20, 'star');
             
@@ -2611,6 +2909,7 @@
                             addCoins(boss.coinReward);
                             triggerScreenShake(0.5, 14);
                             audio.playExplosion();
+                            hapticVibrate([80, 50, 80, 50, 120]);
                             createCartoonParticles(boss.x + boss.width / 2, boss.y + boss.height / 2, 45, 'star');
                             floatingTexts.push(new FloatingText(boss.x + boss.width / 2, boss.y - 20, `+${boss.scoreValue} VICTORY!`, '#ffd200'));
                             floatingTexts.push(new FloatingText(boss.x + boss.width / 2, boss.y + 15, `+${boss.coinReward} 🪙!`, '#fff176'));
@@ -2674,6 +2973,7 @@
                 if (checkCollision(playerBounds, pw.getBounds())) {
                     pw.markedForDeletion = true;
                     audio.playPowerup();
+                    hapticVibrate([30, 40, 30]);
 
                     if (pw.type === 'triple') {
                         player.tripleShotTimer = 8000;
@@ -2748,6 +3048,7 @@
             if (gameState !== 'PLAYING') return;
             gameState = 'PAUSED';
             audio.playPop();
+            hapticVibrate(20);
             pauseScoreVal.innerText = score;
             pauseLevelVal.innerText = level;
             pauseCoinsVal.innerText = `🪙 ${totalCoins}`;
@@ -2757,6 +3058,7 @@
         function resumeGame() {
             if (gameState !== 'PAUSED') return;
             audio.playPop();
+            hapticVibrate(20);
             pauseModal.style.display = 'none';
             gameState = 'PLAYING';
             lastTime = performance.now();
@@ -2846,6 +3148,7 @@
             openedShopFrom = from;
             audio.init();
             audio.playPop();
+            hapticVibrate(20);
             overlay.style.display = 'none';
             if (pauseModal) pauseModal.style.display = 'none';
             shopModal.style.display = 'flex';
@@ -2855,6 +3158,7 @@
         function closeShop() {
             audio.init();
             audio.playPop();
+            hapticVibrate(20);
             shopModal.style.display = 'none';
             if (openedShopFrom === 'pause') {
                 if (player) player.shipId = selectedShip;
@@ -2884,7 +3188,7 @@
                 previewBox.className = 'ship-preview-box';
                 const pCanvas = document.createElement('canvas');
                 pCanvas.width = 80;
-                pCanvas.height = 55;
+                pCanvas.height = 50;
                 previewBox.appendChild(pCanvas);
                 renderShipPreviewCanvas(pCanvas, shipKey);
 
@@ -2896,7 +3200,6 @@
                 pilotEl.className = 'ship-pilot';
                 pilotEl.innerText = ship.pilot;
 
-                // Price Badge with Coin Icon!
                 const priceBadge = document.createElement('div');
                 if (isUnlocked) {
                     priceBadge.className = 'ship-price-badge owned';
@@ -2927,6 +3230,7 @@
                         if (player) player.shipId = selectedShip;
                         saveGameData();
                         audio.playPop();
+                        hapticVibrate(25);
                         renderShopCards();
                     });
                 } else {
@@ -2941,9 +3245,11 @@
                             if (player) player.shipId = selectedShip;
                             saveGameData();
                             audio.playPowerup();
+                            hapticVibrate([40, 30, 40]);
                             renderShopCards();
                         } else {
                             audio.playHurt();
+                            hapticVibrate(60);
                             actionBtn.innerHTML = 'KOIN KURANG <span class="coin-icon-bounce">🪙</span>';
                             setTimeout(() => {
                                 renderShopCards();
@@ -2997,6 +3303,7 @@
             btn.addEventListener('click', (e) => {
                 audio.init();
                 audio.playPop();
+                hapticVibrate(15);
                 document.querySelectorAll('.diff-btn').forEach(b => b.classList.remove('selected'));
                 e.target.classList.add('selected');
                 currentDifficulty = e.target.getAttribute('data-diff');
@@ -3008,6 +3315,7 @@
             btn.addEventListener('click', (e) => {
                 audio.init();
                 audio.playPop();
+                hapticVibrate(15);
                 document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('selected'));
                 e.target.classList.add('selected');
                 currentGameMode = e.target.getAttribute('data-mode');
@@ -3018,6 +3326,7 @@
         soundBtn.addEventListener('click', () => {
             audio.init();
             const enabled = audio.toggle();
+            hapticVibrate(20);
             soundBtn.innerText = enabled ? '🔊' : '🔇';
         });
 
@@ -3029,6 +3338,18 @@
             } else if (gameState === 'PAUSED') {
                 resumeGame();
             }
+        });
+
+        // Mobile Console Quick Buttons
+        mobilePauseBtn.addEventListener('click', () => {
+            audio.init();
+            if (gameState === 'PLAYING') pauseGame();
+            else if (gameState === 'PAUSED') resumeGame();
+        });
+        mobileShopBtn.addEventListener('click', () => {
+            audio.init();
+            if (gameState === 'PLAYING') pauseGame();
+            openShop('pause');
         });
 
         // Pause Modal Buttons
@@ -3054,30 +3375,132 @@
 
         startBtn.addEventListener('click', initGame);
 
-        // Mobile Controls
+        // --- ANDROID VIRTUAL CONTROLLER (Continuous Multi-Touch Slide & Hold-to-Fire) ---
+        const dpadWrapper = document.getElementById('dpad-wrapper');
         const btnUp = document.getElementById('btn-up');
         const btnDown = document.getElementById('btn-down');
         const btnLeft = document.getElementById('btn-left');
         const btnRight = document.getElementById('btn-right');
         const btnFire = document.getElementById('btn-fire');
 
-        const addTouch = (elem, key) => {
-            elem.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                audio.init();
-                keys[key] = true;
-            });
-            elem.addEventListener('touchend', (e) => {
-                e.preventDefault();
-                keys[key] = false;
-            });
+        let activeDpadTouchId = null;
+
+        function updateDpadFromTouch(touch) {
+            const rect = dpadWrapper.getBoundingClientRect();
+            const centerX = rect.left + rect.width / 2;
+            const centerY = rect.top + rect.height / 2;
+
+            const dx = touch.clientX - centerX;
+            const dy = touch.clientY - centerY;
+            const distance = Math.hypot(dx, dy);
+
+            // Reset direction keys
+            keys.ArrowUp = false;
+            keys.ArrowDown = false;
+            keys.ArrowLeft = false;
+            keys.ArrowRight = false;
+            btnUp.classList.remove('active');
+            btnDown.classList.remove('active');
+            btnLeft.classList.remove('active');
+            btnRight.classList.remove('active');
+
+            if (distance > 12) {
+                if (dy < -14) { keys.ArrowUp = true; btnUp.classList.add('active'); }
+                if (dy > 14) { keys.ArrowDown = true; btnDown.classList.add('active'); }
+                if (dx < -14) { keys.ArrowLeft = true; btnLeft.classList.add('active'); }
+                if (dx > 14) { keys.ArrowRight = true; btnRight.classList.add('active'); }
+            }
+        }
+
+        dpadWrapper.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            audio.init();
+            const touch = e.changedTouches[0];
+            activeDpadTouchId = touch.identifier;
+            hapticVibrate(15);
+            updateDpadFromTouch(touch);
+        }, { passive: false });
+
+        dpadWrapper.addEventListener('touchmove', (e) => {
+            e.preventDefault();
+            for (let i = 0; i < e.changedTouches.length; i++) {
+                if (e.changedTouches[i].identifier === activeDpadTouchId) {
+                    updateDpadFromTouch(e.changedTouches[i]);
+                    break;
+                }
+            }
+        }, { passive: false });
+
+        const resetDpad = (e) => {
+            e.preventDefault();
+            activeDpadTouchId = null;
+            keys.ArrowUp = false;
+            keys.ArrowDown = false;
+            keys.ArrowLeft = false;
+            keys.ArrowRight = false;
+            btnUp.classList.remove('active');
+            btnDown.classList.remove('active');
+            btnLeft.classList.remove('active');
+            btnRight.classList.remove('active');
         };
 
-        addTouch(btnUp, 'ArrowUp');
-        addTouch(btnDown, 'ArrowDown');
-        addTouch(btnLeft, 'ArrowLeft');
-        addTouch(btnRight, 'ArrowRight');
-        addTouch(btnFire, 'Space');
+        dpadWrapper.addEventListener('touchend', resetDpad, { passive: false });
+        dpadWrapper.addEventListener('touchcancel', resetDpad, { passive: false });
+
+        // Hold-to-Fire Button (Continuous shooting while thumb is held down)
+        btnFire.addEventListener('touchstart', (e) => {
+            e.preventDefault();
+            audio.init();
+            btnFire.classList.add('active');
+            keys.Space = true;
+            hapticVibrate(20);
+            if (player) player.shoot(performance.now());
+        }, { passive: false });
+
+        const releaseFire = (e) => {
+            e.preventDefault();
+            btnFire.classList.remove('active');
+            keys.Space = false;
+        };
+
+        btnFire.addEventListener('touchend', releaseFire, { passive: false });
+        btnFire.addEventListener('touchcancel', releaseFire, { passive: false });
+
+        // --- DIRECT TOUCH DRAGGING ON CANVAS (Touch-to-Move) ---
+        canvas.addEventListener('touchstart', (e) => {
+            if (gameState !== 'PLAYING') return;
+            audio.init();
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            if (player) {
+                player.targetTouchX = (touch.clientX - rect.left) * scaleX;
+                player.targetTouchY = (touch.clientY - rect.top) * scaleY;
+                player.shoot(performance.now());
+            }
+        }, { passive: true });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (gameState !== 'PLAYING') return;
+            const touch = e.touches[0];
+            const rect = canvas.getBoundingClientRect();
+            const scaleX = canvas.width / rect.width;
+            const scaleY = canvas.height / rect.height;
+            if (player) {
+                player.targetTouchX = (touch.clientX - rect.left) * scaleX;
+                player.targetTouchY = (touch.clientY - rect.top) * scaleY;
+            }
+        }, { passive: true });
+
+        const clearCanvasTouch = () => {
+            if (player) {
+                player.targetTouchX = null;
+                player.targetTouchY = null;
+            }
+        };
+        canvas.addEventListener('touchend', clearCanvasTouch, { passive: true });
+        canvas.addEventListener('touchcancel', clearCanvasTouch, { passive: true });
 
         // Initial setup
         updateCoinsDisplay();
