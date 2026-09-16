@@ -2873,11 +2873,11 @@
                 const diffConfig = difficulties[currentDifficulty];
 
                 const bossTiers = [
-                    { name: '👑 RAJA JELI BLOBBY 👑', raw: 'Raja Blobby Jeli', hp: 45, speed: 90, fireRate: 920, score: 250, coins: 25 },
-                    { name: '👑 RATU OCTO-PUFF 👑', raw: 'Ratu Octo-Puff', hp: 75, speed: 100, fireRate: 820, score: 450, coins: 40 },
-                    { name: '👑 JENDERAL CHOMPY 👑', raw: 'Jenderal Chompy', hp: 110, speed: 110, fireRate: 720, score: 700, coins: 55 },
-                    { name: '👑 KAISAR TENTAKING 👑', raw: 'Kaisar Tentaking', hp: 150, speed: 120, fireRate: 620, score: 1000, coins: 75 },
-                    { name: '👑 DEWA BINTANG VOID-LORD 👑', raw: 'Dewa Bintang Void-Lord', hp: 200, speed: 130, fireRate: 540, score: 1500, coins: 100 }
+                    { name: '👑 RAJA JELI BLOBBY 👑', raw: 'Raja Blobby Jeli', hp: 45, speed: 90, fireRate: 920, score: 20, coins: 25 },
+                    { name: '👑 RATU OCTO-PUFF 👑', raw: 'Ratu Octo-Puff', hp: 75, speed: 100, fireRate: 820, score: 20, coins: 40 },
+                    { name: '👑 JENDERAL CHOMPY 👑', raw: 'Jenderal Chompy', hp: 110, speed: 110, fireRate: 720, score: 20, coins: 55 },
+                    { name: '👑 KAISAR TENTAKING 👑', raw: 'Kaisar Tentaking', hp: 150, speed: 120, fireRate: 620, score: 20, coins: 75 },
+                    { name: '👑 DEWA BINTANG VOID-LORD 👑', raw: 'Dewa Bintang Void-Lord', hp: 200, speed: 130, fireRate: 540, score: 20, coins: 100 }
                 ];
 
                 const infoIndex = Math.min(tier - 1, bossTiers.length - 1);
@@ -2894,7 +2894,7 @@
                 this.lastShot = 0;
                 this.fireRate = Math.max(400, info.fireRate - (tier * 15));
                 this.hitTime = 0;
-                this.scoreValue = info.score + (tier > 5 ? (tier - 5) * 300 : 0);
+                this.scoreValue = 20;
                 this.coinReward = info.coins + (tier > 5 ? (tier - 5) * 20 : 0);
 
                 bossHud.style.display = 'flex';
